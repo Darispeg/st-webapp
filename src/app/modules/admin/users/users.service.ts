@@ -34,7 +34,6 @@ UsersService
         return this._httpClient.get<User[]>(`${environment.APIurl}/users`)
         .pipe(
             tap((users) => {
-                console.log(users);
                 this._users.next(users);
             })
         );
@@ -72,7 +71,7 @@ UsersService
             switchMap((User) => {
                 if ( !User )
                 {
-                    return throwError(`No se pudo encontrar el proveedor con la clave ${key}!`);
+                    return throwError(`No se pudo encontrar el usuario con la clave ${key}!`);
                 }
                 return of(User);
             })

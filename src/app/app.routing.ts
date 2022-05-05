@@ -67,7 +67,9 @@ export const appRoutes: Route[] = [
             {
                 path: 'admin', children:
                 [
-                    {path: 'users', loadChildren: () => import('app/modules/admin/users/users.module').then(m => m.UsersModule)},              ]
+                    {path: 'users', loadChildren: () => import('app/modules/admin/users/users.module').then(m => m.UsersModule)},  
+                    {path: 'events', loadChildren: () => import('app/modules/admin/events/events.module').then(m => m.EventsModule)},            
+                ]
             },
             { path: '**', redirectTo: 'dashboard'}
         ]

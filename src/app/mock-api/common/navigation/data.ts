@@ -22,7 +22,15 @@ export const defaultNavigation: FuseNavigationItem[] = [
             type: 'basic',
             icon: 'heroicons_outline:user',
             link: 'admin/users'
-        }]
+        },
+        {
+            id: 'events',
+            title : 'Eventos',
+            type: 'basic',
+            icon: 'heroicons_outline:star',
+            link: 'admin/events'
+        }
+    ]
     }
 ];
 export const compactNavigation: FuseNavigationItem[] = [

@@ -17,7 +17,7 @@
                         <span class="ml-2">Editar</span>
                     </button>
                     <mat-divider></mat-divider>
-                    <button mat-menu-item (click)="deleteUser()">
+                    <button mat-menu-item (click)="deleteEvent()">
                         <mat-icon class="text-red-500" svgIcon="heroicons_outline:trash"></mat-icon>
                         <span class="text-red-500">Eliminar</span>
                     </button>
@@ -35,22 +35,22 @@
             <div class="w-full max-w-3xl">
 
                 <!-- Name -->
-                <div class="mt-3 text-4xl font-bold truncate">{{user.fullname}}</div>
+                <div class="mt-3 text-4xl font-bold truncate">{{event.name}}</div>
 
                 <!-- Status -->
                 <div class="flex flex-wrap items-center">
                     <div>
-                        <div class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer" [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': (user.status|lowercase) === 'active',
-                                         'text-red-800 bg-red-200 dark:text-red-100 dark:bg-red-500': (user.status|lowercase) === 'inactive'}">
+                        <div class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer" [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': (event.status|lowercase) === 'active',
+                                         'text-red-800 bg-red-200 dark:text-red-100 dark:bg-red-500': (event.status|lowercase) === 'inactive'}">
 
                             <!-- Activo -->
-                            <ng-container *ngIf="(user.status|lowercase) === 'active'">
+                            <ng-container *ngIf="(event.status|lowercase) === 'active'">
                                 <mat-icon class="icon-size-5 text-current" svgIcon="heroicons_solid:check-circle"></mat-icon>
                                 <span class="ml-2 mr-1 text-md font-medium">Activo</span>
                             </ng-container>
 
                             <!-- Inactivo -->
-                            <ng-container *ngIf="(user.status|lowercase) === 'inactive'">
+                            <ng-container *ngIf="(event.status|lowercase) === 'inactive'">
                                 <mat-icon class="icon-size-4 text-current" svgIcon="heroicons_solid:x-circle"></mat-icon>
                                 <span class="ml-2 mr-1 text-md font-medium">Inactivo</span>
                             </ng-container>
@@ -59,40 +59,49 @@
                 </div>
 
                 <div class="flex flex-col mt-4 pt-6 border-t space-y-8">
-                    <!-- Fullname -->
+                    <!-- Name -->
                     <div class="flex sm:items-center">
-                        <mat-icon svgIcon="heroicons_outline:identification"></mat-icon>
-                        <div class="ml-6 leading-6">{{user.fullname}}</div>
+                        <mat-icon svgIcon="heroicons_outline:archive"></mat-icon>
+                        <div class="ml-6 leading-6">{{event.name}}</div>
                     </div>
-                    <!-- Username -->
+                    <!-- Description -->
                     <div class="flex sm:items-center">
-                        <mat-icon svgIcon="heroicons_outline:tag"></mat-icon>
-                        <div class="ml-6 leading-6">{{user.username}}</div>
+                        <mat-icon svgIcon="heroicons_outline:clipboard"></mat-icon>
+                        <div class="ml-6 leading-6">{{event.description}}</div>
                     </div>
 
                     <!-- Phone -->
-                    <ng-container *ngIf="user.phone">
+                    <ng-container *ngIf="event.phone">
                         <div class="flex">
                             <mat-icon svgIcon="heroicons_outline:phone"></mat-icon>
-                            <div class="max-w-none ml-6 prose prose-sm">{{user.phone}}</div>
+                            <div class="max-w-none ml-6 prose prose-sm">{{event.phone}}</div>
                         </div>
                     </ng-container>
 
-                    <!-- Email -->
-                    <ng-container *ngIf="user.email">
+                    <!-- Category -->
+                    <ng-container *ngIf="event.category">
                         <div class="flex">
-                            <mat-icon svgIcon="heroicons_outline:mail"></mat-icon>
-                            <div class="max-w-none ml-6 prose prose-sm">{{user.email}}</div>
+                            <mat-icon svgIcon="heroicons_outline:adjustments"></mat-icon>
+                            <div class="max-w-none ml-6 prose prose-sm">{{event.category}}</div>
                         </div>
                     </ng-container>
 
-                    <!-- created Date -->
-                    <ng-container *ngIf="user.createdDate">
+                    <!-- Address -->
+                    <ng-container *ngIf="event.address">
+                        <div class="flex">
+                            <mat-icon svgIcon="heroicons_outline:location-marker"></mat-icon>
+                            <div class="max-w-none ml-6 prose prose-sm">{{event.address}}</div>
+                        </div>
+                    </ng-container>
+
+                    <!-- DateTime -->
+                    <ng-container *ngIf="event.dateTime">
                         <div class="flex">
                             <mat-icon svgIcon="heroicons_outline:calendar"></mat-icon>
-                            <div class="max-w-none ml-6 prose prose-sm">{{user.createdDate | date:'mediumDate'}}</div>
+                            <div class="max-w-none ml-6 prose prose-sm">{{event.dateTime | date:'mediumDate'}}</div>
                         </div>
                     </ng-container>
+                    
                 </div>
             </div>
         </div>
@@ -104,7 +113,7 @@
         <div class="flex items-center justify-between bg-blue-900 w-full h-16 px-8 sm:px-12 dark:bg-accent-700">
             <div class="flex items-center justify-center">
                 <span class="font-medium text-white text-2xl">
-                    {{ user.key === ''? 'Registrar': 'Editar'}} Usuario
+                    {{ event.key === ''? 'Registrar': 'Editar'}} Evento
                 </span>
             </div>
             <div class="flex items-center">
@@ -118,40 +127,40 @@
 
         <div class="relative flex flex-col flex-auto items-center p-6 pt-0 pb-0 sm:p-12 sm:pt-0">
             <div class="w-full max-w-3xl">
-                <form [formGroup]="userForm">
+                <form [formGroup]="eventForm">
                     <div class="flex flex-wrap justify-between">
-                        <!--Username-->
-                        <div class="mt-8 flex-auto" [ngClass]="{'mr-8': user.key}">
+                        <!-- Name -->
+                        <div class="mt-8 flex-auto" [ngClass]="{'mr-8': event.key}">
                             <mat-form-field class="w-full ">
-                                <mat-label>Nombre de usuario</mat-label>
+                                <mat-label>Nombre del Evento</mat-label>
                                 <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:tag"></mat-icon>
-                                <input matInput [formControlName]="'username'" placeholder="Nombre de usuario" [spellcheck]="false" [errorStateMatcher]="matcher">
-                                <mat-error *ngIf="userForm.get('username').errors">
-                                    {{matcher.getErrorMessage('username', userForm)}}
+                                <input matInput [formControlName]="'name'" placeholder="Nombre del Evento" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                <mat-error *ngIf="eventForm.get('name').errors">
+                                    {{matcher.getErrorMessage('name', eventForm)}}
                                 </mat-error>
                             </mat-form-field>
                         </div>
                         <!-- Status -->
-                        <div class="mt-8" *ngIf="user.key">
+                        <div class="mt-8" *ngIf="event.key">
                             <mat-label class="font-medium">Estado</mat-label>
-                            <div class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer" [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': (user.status|lowercase) === 'active',
-                                             'text-red-800 bg-red-200 dark:text-red-100 dark:bg-red-500': (user.status|lowercase) === 'inactive'}" [matMenuTriggerFor]="statusMenu">
+                            <div class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer" [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': (event.status|lowercase) === 'active',
+                                             'text-red-800 bg-red-200 dark:text-red-100 dark:bg-red-500': (event.status|lowercase) === 'inactive'}" [matMenuTriggerFor]="statusMenu">
 
                                 <!-- Activo -->
-                                <ng-container *ngIf="(user.status|lowercase) === 'active'">
+                                <ng-container *ngIf="(event.status|lowercase) === 'active'">
                                     <mat-icon class="icon-size-5 text-current" svgIcon="heroicons_solid:check-circle"></mat-icon>
                                     <span class="ml-2 mr-1 text-md font-medium">Activo</span>
                                 </ng-container>
 
                                 <!-- Inactivo -->
-                                <ng-container *ngIf="(user.status|lowercase) === 'inactive'">
+                                <ng-container *ngIf="(event.status|lowercase) === 'inactive'">
                                     <mat-icon class="icon-size-4 text-current" svgIcon="heroicons_solid:x-circle"></mat-icon>
                                     <span class="ml-2 mr-1 text-md font-medium">Inactivo</span>
                                 </ng-container>
                             </div>
                             <mat-menu #statusMenu="matMenu">
                                 <!-- Activo -->
-                                <button [ngClass]="{'bg-hover': (user.status|lowercase) === 'active'}" mat-menu-item (click)="setStatus('Active')">
+                                <button [ngClass]="{'bg-hover': (event.status|lowercase) === 'active'}" mat-menu-item (click)="setStatus('Active')">
                                     <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
                                         <span class="font-medium">Activo</span>
                                         <mat-icon class="mr-0 icon-size-4 text-green-600 dark:text-green-500"
@@ -159,7 +168,7 @@
                                     </span>
                                 </button>
                                 <!-- Inactivo -->
-                                <button [ngClass]="{'bg-hover': (user.status|lowercase) === 'inactive'}" mat-menu-item (click)="setStatus('Inactive')">
+                                <button [ngClass]="{'bg-hover': (event.status|lowercase) === 'inactive'}" mat-menu-item (click)="setStatus('Inactive')">
                                     <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
                                         <span class="font-medium">Inactivo</span>
                                         <mat-icon class="mr-0 icon-size-4 text-red-600 dark:text-red-500"
@@ -170,47 +179,45 @@
                         </div>
                     </div>
 
-                    <!-- Fullname -->
-                    <div class="mt-4">
-                        <mat-form-field class="w-full">
-                            <mat-label>Nombre Completo</mat-label>
-                            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:identification"></mat-icon>
-                            <input matInput [formControlName]="'fullname'" placeholder="Nombre Completo" [spellcheck]="false" [errorStateMatcher]="matcher">
-                            <mat-error *ngIf="userForm.get('fullname').errors">
-                                {{matcher.getErrorMessage('fullname', userForm)}}
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-
                     <div class="mt-4">
                         <mat-form-field class="w-full">
                             <mat-label>Teléfono</mat-label>
                             <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:phone"></mat-icon>
                             <input matInput maxlength="10" minlength="6" [formControlName]="'phone'" placeholder="Telefono" [spellcheck]="false" [errorStateMatcher]="matcher">
-                            <mat-error *ngIf="userForm.get('phone').errors">
-                                {{matcher.getErrorMessage('phone', userForm)}}
+                            <mat-error *ngIf="eventForm.get('phone').errors">
+                                {{matcher.getErrorMessage('phone', eventForm)}}
                             </mat-error>
                         </mat-form-field>
                     </div>
 
                     <div class="mt-4">
                         <mat-form-field class="w-full ">
-                            <mat-label>Email</mat-label>
+                            <mat-label>Ciudad</mat-label>
                             <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:mail"></mat-icon>
-                            <input matInput [formControlName]="'email'" placeholder="Email" [spellcheck]="false" [errorStateMatcher]="matcher">
-                            <mat-error *ngIf="userForm.get('email').errors">
-                                {{matcher.getErrorMessage('email', userForm)}}
+                            <input matInput [formControlName]="'city'" placeholder="Ciudad" [spellcheck]="false" [errorStateMatcher]="matcher">
+                            <mat-error *ngIf="eventForm.get('city').errors">
+                                {{matcher.getErrorMessage('city', eventForm)}}
                             </mat-error>
                         </mat-form-field>
                     </div>
 
                     <div class="mt-4">
                         <mat-form-field class="w-full ">
-                            <mat-label>Password</mat-label>
-                            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:code"></mat-icon>
-                            <input matInput [formControlName]="'password'" placeholder="password" [spellcheck]="false" [errorStateMatcher]="matcher">
-                            <mat-error *ngIf="userForm.get('password').errors">
-                                {{matcher.getErrorMessage('password', userForm)}}
+                            <mat-label>Direccion</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:location-marker"></mat-icon>
+                            <input matInput [formControlName]="'address'" placeholder="direccion" [spellcheck]="false" [errorStateMatcher]="matcher">
+                            <mat-error *ngIf="eventForm.get('address').errors">
+                                {{matcher.getErrorMessage('address', eventForm)}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="mt-4">
+                        <mat-form-field class="w-full ">
+                            <mat-label>Descripcion</mat-label>
+                            <textarea matInput [formControlName]="'description'" placeholder="Descripcion" [spellcheck]="false" [errorStateMatcher]="matcher" cols="30" rows="10"></textarea>
+                            <mat-error *ngIf="eventForm.get('description').errors">
+                                {{matcher.getErrorMessage('description', eventForm)}}
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -218,8 +225,8 @@
                     <!-- Actions -->
                     <div class="flex items-center mt-10 -mx-6 sm:-mx-12 py-4 pr-4 pl-1 sm:pr-12 sm:pl-7 border-t bg-gray-50 dark:bg-transparent ">
                         <!-- Delete -->
-                        <ng-container *ngIf="user.key !=''">
-                            <button mat-button color="warn" matTooltip="Eliminar" (click)="deleteUser()">
+                        <ng-container *ngIf="event.key !=''">
+                            <button mat-button color="warn" matTooltip="Eliminar" (click)="deleteEvent()">
                                 Eliminar
                             </button>
                         </ng-container>
@@ -228,7 +235,7 @@
                             Cancelar
                         </button>
                         <!-- Save -->
-                        <button class="ml-2" mat-flat-button color="primary" [disabled]="userForm.invalid" matTooltip="Guardar " (click)="updateUser()">
+                        <button class="ml-2" mat-flat-button color="primary" [disabled]="eventForm.invalid" matTooltip="Guardar " (click)="updateEvent()">
                             Guardar
                         </button>
                     </div>
