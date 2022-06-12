@@ -17,28 +17,19 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { PipesModule } from 'app/core/pipes/pipes.module';
 import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
 import { MyCustomPaginatorIntl } from '../../../shared/paginator-intl';
-import { EventsComponent } from './events.component';
-import { EventsListComponent } from './list/list.component';
-import { EventsDetailsComponent } from './details/details.component';
-import { eventsRoutes } from './events.routing';
-import { NoSanitizePipe } from 'app/shared/no-sanitize-pipe';
-import { MatDialogModule } from '@angular/material/dialog';
-import { FileComponentDialog } from './files/file.component';
-import { BasicInfoComponent } from './basic-info/basic-info.component';
-import { TicketsComponent } from './tickets/tickets.component';
+import { RolesComponent } from './roles.component';
+import { RolesListComponent } from './list/list.component';
+import { RolesDetailsComponent } from './details/details.component';
+import { rolesRoutes } from './roles.routing';
 
 @NgModule({
     declarations: [
-        EventsComponent,
-        EventsListComponent,
-        EventsDetailsComponent,
-        FileComponentDialog,
-        NoSanitizePipe,
-        BasicInfoComponent,
-        TicketsComponent
+        RolesComponent,
+        RolesListComponent,
+        RolesDetailsComponent
     ],
     imports: [
-        RouterModule.forChild(eventsRoutes),
+        RouterModule.forChild(rolesRoutes),
         MatButtonModule,
         MatCheckboxModule,
         MatDividerModule,
@@ -54,13 +45,12 @@ import { TicketsComponent } from './tickets/tickets.component';
         PipesModule,
         SharedModule,
         MatSnackBarModule,
-        MatPaginatorModule,
-        MatDialogModule,
+        MatPaginatorModule
     ],
     providers : [
         { provide: MatPaginatorIntl, useClass: MyCustomPaginatorIntl }
     ]
 })
-export class EventsModule{
+export class RolesModule{
 
 }

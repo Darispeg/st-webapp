@@ -1,9 +1,9 @@
-import { CitiesPipe } from './cities.pipe';
 import { NgModule } from "@angular/core";
+import { TruncatePipe } from './truncate-pipe';
 
 @NgModule({
-    declarations: [CitiesPipe],
-    exports: [CitiesPipe]
+    declarations: [TruncatePipe],
+    exports: []
 })
 export class PipesModule{
 

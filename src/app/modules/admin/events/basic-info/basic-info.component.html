@@ -1,0 +1,114 @@
+<form [formGroup]="eventForm">
+    <div class="flex flex-wrap justify-between">
+        <!-- Name -->
+        <div class="mt-8 flex-auto" [ngClass]="{'mr-8': event.key}">
+            <mat-form-field class="w-full ">
+                <mat-label>Nombre del Evento</mat-label>
+                <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:tag"></mat-icon>
+                <input matInput [formControlName]="'name'" placeholder="Nombre del Evento" [spellcheck]="false" [errorStateMatcher]="matcher">
+                <mat-error *ngIf="eventForm.get('name').errors">
+                    {{matcher.getErrorMessage('name', eventForm)}}
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <!-- Status -->
+        <div class="mt-8" *ngIf="event.key">
+            <mat-label class="font-medium">Estado</mat-label>
+            <div class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer" [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': (event.status|lowercase) === 'active',
+                             'text-red-800 bg-red-200 dark:text-red-100 dark:bg-red-500': (event.status|lowercase) === 'inactive'}" [matMenuTriggerFor]="statusMenu">
+
+                <!-- Activo -->
+                <ng-container *ngIf="(event.status|lowercase) === 'active'">
+                    <mat-icon class="icon-size-5 text-current" svgIcon="heroicons_solid:check-circle"></mat-icon>
+                    <span class="ml-2 mr-1 text-md font-medium">Activo</span>
+                </ng-container>
+
+                <!-- Inactivo -->
+                <ng-container *ngIf="(event.status|lowercase) === 'inactive'">
+                    <mat-icon class="icon-size-4 text-current" svgIcon="heroicons_solid:x-circle"></mat-icon>
+                    <span class="ml-2 mr-1 text-md font-medium">Inactivo</span>
+                </ng-container>
+            </div>
+            <mat-menu #statusMenu="matMenu">
+                <!-- Activo -->
+                <button [ngClass]="{'bg-hover': (event.status|lowercase) === 'active'}" mat-menu-item (click)="setStatus('Active')">
+                    <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
+                        <span class="font-medium">Activo</span>
+                        <mat-icon class="mr-0 icon-size-4 text-green-600 dark:text-green-500"
+                                  svgIcon="heroicons_solid:check-circle"></mat-icon>
+                    </span>
+                </button>
+                <!-- Inactivo -->
+                <button [ngClass]="{'bg-hover': (event.status|lowercase) === 'inactive'}" mat-menu-item (click)="setStatus('Inactive')">
+                    <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
+                        <span class="font-medium">Inactivo</span>
+                        <mat-icon class="mr-0 icon-size-4 text-red-600 dark:text-red-500"
+                                  svgIcon="heroicons_solid:x-circle"></mat-icon>
+                    </span>
+                </button>
+            </mat-menu>
+        </div>
+    </div>
+
+    <ng-container *ngIf="event.key">
+        <div class="mt-4 text-center">
+            <button mat-menu-item (click)="openDialog()">
+                <mat-icon svgIcon="heroicons_solid:pencil-alt"></mat-icon>
+                <span class="ml-2">Editar Imagen</span>
+            </button>
+        </div>
+    </ng-container>
+
+    <div class="mt-4">
+        <mat-form-field class="w-full">
+            <mat-label>Teléfono</mat-label>
+            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:phone"></mat-icon>
+            <input matInput maxlength="10" minlength="6" [formControlName]="'phone'" placeholder="Telefono" [spellcheck]="false" [errorStateMatcher]="matcher">
+            <mat-error *ngIf="eventForm.get('phone').errors">
+                {{matcher.getErrorMessage('phone', eventForm)}}
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div class="mt-4">
+        <mat-form-field class="w-full ">
+            <mat-label>Ciudad</mat-label>
+            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:mail"></mat-icon>
+            <input matInput [formControlName]="'city'" placeholder="Ciudad" [spellcheck]="false" [errorStateMatcher]="matcher">
+            <mat-error *ngIf="eventForm.get('city').errors">
+                {{matcher.getErrorMessage('city', eventForm)}}
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div class="mt-4">
+        <mat-form-field class="w-full ">
+            <mat-label>Direccion</mat-label>
+            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:location-marker"></mat-icon>
+            <input matInput [formControlName]="'address'" placeholder="direccion" [spellcheck]="false" [errorStateMatcher]="matcher">
+            <mat-error *ngIf="eventForm.get('address').errors">
+                {{matcher.getErrorMessage('address', eventForm)}}
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div class="mt-4">
+        <mat-form-field class="w-full ">
+            <mat-label>Descripcion</mat-label>
+            <textarea matInput [formControlName]="'description'" placeholder="Descripcion" [spellcheck]="false" [errorStateMatcher]="matcher" cols="30" rows="3"></textarea>
+            <mat-error *ngIf="eventForm.get('description').errors">
+                {{matcher.getErrorMessage('description', eventForm)}}
+            </mat-error>
+        </mat-form-field>
+    </div>
+
+    <div class="mt-4">
+        <mat-form-field class="w-full ">
+            <mat-label>Ubicacion del Evento</mat-label>
+            <textarea matInput [formControlName]="'location'" placeholder="Mapa del Evento" [spellcheck]="false" [errorStateMatcher]="matcher" cols="30" rows="7"></textarea>
+            <mat-error *ngIf="eventForm.get('location').errors">
+                {{matcher.getErrorMessage('location', eventForm)}}
+            </mat-error>
+        </mat-form-field>
+    </div>
+</form>

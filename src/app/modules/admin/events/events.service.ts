@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, of, throwError } from "rxjs";
 import { environment } from "environments/environment";
 import { map, take, tap, switchMap, filter } from 'rxjs/operators';
 import { Event } from "../models/events.types";
+import { Ticket } from "../models/tickets.types";
 
 
 @Injectable({
@@ -14,6 +15,7 @@ EventsService
 {
     private _event: BehaviorSubject<Event | null> = new BehaviorSubject(null);
     private _events: BehaviorSubject<Event[] | null> = new BehaviorSubject(null);
+    private _tickets: BehaviorSubject<Ticket[] | null> = new BehaviorSubject(null);
 
     private _new:string = '00000000-0000-0000-0000-000000000000';
 
@@ -27,6 +29,11 @@ EventsService
     get event$(): Observable<Event>
     {
         return this._event.asObservable();
+    }
+
+    get tickets$(): Observable<Ticket[]>
+    {
+        return this._tickets.asObservable();
     }
 
     getEvents(): Observable<Event[]>
@@ -54,6 +61,7 @@ EventsService
                         address : '',
                         city : '',
                         phone: '',
+                        urlImage: '',
                         location : '',
                         dateTime : undefined,
                         status: 'active'
@@ -129,6 +137,33 @@ EventsService
                     events.splice(index, 1);
                     this._events.next(events);
                     return isDeleted;
+                })
+            ))
+        )
+    }
+
+    getTicketsEvent(eventKey: string): Observable<Ticket[]>
+    {
+        return this._httpClient.get<Ticket[]>(`${environment.APIurl}/events/${eventKey}/tickets`)
+        .pipe(
+            tap((tickets) => {
+                this._tickets.next(tickets);
+            })
+        );
+    }
+
+    createTicket(eventKey: string, newTicket: Ticket): Observable<Ticket>
+    {
+        newTicket.eventKey = eventKey;
+        return this.tickets$.pipe(
+            take(1),
+            switchMap(tickets => this._httpClient.post<Ticket>(`${environment.APIurl}/events/${eventKey}/tickets`, newTicket).pipe(
+                map((newTicket) => {
+                    if(!tickets)
+                        this._tickets.next([newTicket, ...[]]);
+                    else
+                        this._tickets.next([newTicket, ...tickets]);
+                    return newTicket;
                 })
             ))
         )

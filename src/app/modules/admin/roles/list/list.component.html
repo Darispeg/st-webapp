@@ -1,0 +1,69 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden items-center">
+    <mat-drawer-container class="flex-auto dark:bg-transparent" (backdropClick)="onBackdropClicked()">
+
+        <mat-drawer class="w-full md:w-160 dark:bg-gray-900" [mode]="drawerMode" [opened]="false" [position]="'end'" [disableClose]="true" #matDrawer>
+            <router-outlet></router-outlet>
+        </mat-drawer>
+    
+        <mat-drawer-content>
+            <div class="items-center mt-4">
+            <!-- Roles -->
+                <div class="w-full md:w-240 p-16 rounded-2xl shadow bg-card print:w-auto print:p-0 print:rounded-none print:shadow-none print:bg-transparent">
+                    <!-- Title -->
+                    <div class="text-4xl font-extrabold tracking-tight leading-none">
+                        Roles de Usuario
+                    </div>
+                    <div class="flex flex-col mt-8 divide-y border-t border-b">
+                        <ng-container *ngIf="users$ | async as users">
+                            <ng-container *ngFor="let user of users; trackBy: trackByFn;">
+                                <div class="flex flex-col sm:flex-row sm:items-center py-6">
+                                    <div class="flex items-center">
+                                        <div class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden">
+                                            <div class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                                {{user.fullname.charAt(0)}}
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="font-medium">{{user.fullname}}</div>
+                                            <div class="text-secondary">{{user.email}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center mt-4 sm:mt-0 sm:ml-auto">
+                                        <div class="order-2 sm:order-1 ml-4 sm:ml-0">
+                                            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-40">
+                                                <mat-select
+                                                    [panelClass]="'w-72 min-w-72 max-w-72 h-auto max-h-none'"
+                                                    [value]="user.role.name"
+                                                    disableOptionCentering
+                                                    #roleSelect="matSelect">
+                                                    <mat-select-trigger class="text-md">
+                                                        <span>Role:</span>
+                                                        <span class="ml-1 font-medium">{{roleSelect.value | titlecase}}</span>
+                                                    </mat-select-trigger>
+                                                    <ng-container *ngIf="roles$ | async as roles">
+                                                        <ng-container *ngFor="let role of roles">
+                                                            <mat-option
+                                                                class="h-auto py-4 leading-none"
+                                                                [value]="role.name">
+                                                                <div class="font-medium">{{role.name}}</div>
+                                                                <div class="mt-1.5 text-sm whitespace-normal leading-normal text-secondary">
+                                                                    <button (click)="changeRoleToUser(user, role)">
+                                                                        <span class="ml-2 font-medium">{{role.description}}</span>
+                                                                    </button>                 
+                                                                </div>
+                                                            </mat-option>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+</div>

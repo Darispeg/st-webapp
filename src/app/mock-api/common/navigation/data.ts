@@ -24,11 +24,26 @@ export const defaultNavigation: FuseNavigationItem[] = [
             link: 'admin/users'
         },
         {
+            id: 'roles',
+            title : 'Roles',
+            subtitle : 'Roles del Sistema',
+            type: 'basic',
+            icon: 'heroicons_outline:key',
+            link: 'admin/roles'
+        },
+        {
             id: 'events',
             title : 'Eventos',
             type: 'basic',
             icon: 'heroicons_outline:star',
             link: 'admin/events'
+        },
+        {
+            id: 'index',
+            title : 'index',
+            type: 'basic',
+            icon: 'heroicons_outline:star',
+            link: 'admin/index'
         }
     ]
     }

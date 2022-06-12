@@ -1,3 +1,5 @@
+import { Role } from "./roles.types";
+
 export interface User
 {
     key?: string,
@@ -8,5 +10,6 @@ export interface User
     phone: string,
     createdDate?: Date,
     lastModifiedDate?: Date,
-    status: String
+    status: String,
+    roles: Role[]
 }

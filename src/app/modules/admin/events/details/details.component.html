@@ -12,9 +12,14 @@
                     <mat-icon class="text-white" svgIcon="heroicons_outline:dots-vertical"></mat-icon>
                 </button>
                 <mat-menu #moreMenu="matMenu">
-                    <button mat-menu-item (click)="toggleEditMode(true)">
+                    <button mat-menu-item (click)="toggleEditMode(true, 'basic')">
                         <mat-icon svgIcon="heroicons_solid:pencil-alt"></mat-icon>
-                        <span class="ml-2">Editar</span>
+                        <span class="ml-2">Editar informacion basica</span>
+                    </button>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item (click)="toggleEditMode(true, 'tickets')">
+                        <mat-icon svgIcon="heroicons_solid:pencil-alt"></mat-icon>
+                        <span class="ml-2">Editar entradas del evento</span>
                     </button>
                     <mat-divider></mat-divider>
                     <button mat-menu-item (click)="deleteEvent()">
@@ -59,6 +64,13 @@
                 </div>
 
                 <div class="flex flex-col mt-4 pt-6 border-t space-y-8">
+
+                    <!-- Image -->
+                    <ng-container *ngIf="event.urlImage">
+                        <div class="flex h-72 mt-3">
+                            <img class="rounded-lg" src="{{event.urlImage}}">
+                        </div>
+                    </ng-container>
                     <!-- Name -->
                     <div class="flex sm:items-center">
                         <mat-icon svgIcon="heroicons_outline:archive"></mat-icon>
@@ -92,6 +104,85 @@
                             <mat-icon svgIcon="heroicons_outline:location-marker"></mat-icon>
                             <div class="max-w-none ml-6 prose prose-sm">{{event.address}}</div>
                         </div>
+                    </ng-container>   
+                    <ng-container *ngIf="tickets$ | async as tickets">
+                        <div class="grid">
+                            <div class="grid-cols-2 sm:grid-cols-5 z-10 sticky top-0 grid gap-x-20 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                                <div class="col-span-1 sm:col-span-2">
+                                    Tipo de Entrada
+                                </div>
+                                <div class="hidden lg:block">
+                                    Stock
+                                </div>
+                                <div>Detalles</div>
+                                <div></div>
+                            </div>
+                            <ng-container *ngIf="tickets$ | async as tickets">
+                                <ng-container *ngFor="let ticket of tickets">
+                                    <div class="grid-cols-2 sm:grid-cols-4 grid items-center gap-x-20 py-3 px-6 md:px-8 border-b" [ngClass]="{'text-gray-800 bg-gray-200 dark:text-gray-100 dark:bg-gray-500': selectedTicket?.key === ticket.key}">
+                                        <!-- Name -->
+                                        <div class="col-span-1 sm:col-span-2">
+                                            {{ticket.type}}
+                                        </div>
+            
+                                        <!-- Stock -->
+                                        <div class="hidden lg:flex items-center">
+                                            <div class="min-w-4">{{ticket.available}}</div>
+                                            <!-- Low stock -->
+                                            <div class="flex items-end ml-2 w-1 h-4 bg-red-200 rounded overflow-hidden" *ngIf="ticket.available < 20">
+                                                <div class="flex w-full h-1/3 bg-red-600"></div>
+                                            </div>
+                                            <!-- Medium stock -->
+                                            <div class="flex items-end ml-2 w-1 h-4 bg-orange-200 rounded overflow-hidden" *ngIf="ticket.available >= 20 && ticket.available < 30">
+                                                <div class="flex w-full h-2/4 bg-orange-400"></div>
+                                            </div>
+                                            <!-- High stock -->
+                                            <div class="flex items-end ml-2 w-1 h-4 bg-green-100 rounded overflow-hidden" *ngIf="ticket.available >= 30">
+                                                <div class="flex w-full h-full bg-green-400"></div>
+                                            </div>
+                                        </div>
+            
+                                        <!-- ticket button -->
+                                        <div>
+                                            <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button (click)="toggleTickets(ticket)">
+                                                <mat-icon
+                                                    class="icon-size-5" [svgIcon]="selectedTicket?.key === ticket.key ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="grid">
+                                        <ng-container *ngIf="selectedTicket?.key === ticket.key">
+                                            <ng-container *ngTemplateOutlet="rowTicketsTemplate; context: {$implicit: ticket}"></ng-container>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                            <ng-template #rowTicketsTemplate let-ticket>
+                                <div class="grid grid-cols-2 items-center gap-x-12 py-3 px-6 md:px-8 border-b">
+                                    <mat-form-field class="w-full m-auto">
+                                        <mat-label>Disponibles</mat-label>
+                                        <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:collection"></mat-icon>
+                                        <input class="text-black font-bold" matInput disabled value={{ticket.available}}>
+                                    </mat-form-field>
+                                    <mat-form-field class="w-full m-auto">
+                                        <mat-label>Precio</mat-label>
+                                        <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:collection"></mat-icon>
+                                        <input class="text-black font-bold" matInput disabled value={{ticket.price}}>
+                                    </mat-form-field>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </ng-container>
+
+                    <!-- Map -->
+                    <ng-container *ngIf="event.location">
+                        <div class="mt-3 mx-auto">
+                            <div class="text-center font-bold font-serif">
+                                <p>Ubicacion del Evento</p>
+                            </div>
+                            <div [innerHTML]="event.location | noSanitize"
+                                class="w-2/3"></div>
+                        </div>
                     </ng-container>
 
                     <!-- DateTime -->
@@ -101,7 +192,6 @@
                             <div class="max-w-none ml-6 prose prose-sm">{{event.dateTime | date:'mediumDate'}}</div>
                         </div>
                     </ng-container>
-                    
                 </div>
             </div>
         </div>
@@ -127,120 +217,34 @@
 
         <div class="relative flex flex-col flex-auto items-center p-6 pt-0 pb-0 sm:p-12 sm:pt-0">
             <div class="w-full max-w-3xl">
-                <form [formGroup]="eventForm">
-                    <div class="flex flex-wrap justify-between">
-                        <!-- Name -->
-                        <div class="mt-8 flex-auto" [ngClass]="{'mr-8': event.key}">
-                            <mat-form-field class="w-full ">
-                                <mat-label>Nombre del Evento</mat-label>
-                                <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:tag"></mat-icon>
-                                <input matInput [formControlName]="'name'" placeholder="Nombre del Evento" [spellcheck]="false" [errorStateMatcher]="matcher">
-                                <mat-error *ngIf="eventForm.get('name').errors">
-                                    {{matcher.getErrorMessage('name', eventForm)}}
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
-                        <!-- Status -->
-                        <div class="mt-8" *ngIf="event.key">
-                            <mat-label class="font-medium">Estado</mat-label>
-                            <div class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer" [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': (event.status|lowercase) === 'active',
-                                             'text-red-800 bg-red-200 dark:text-red-100 dark:bg-red-500': (event.status|lowercase) === 'inactive'}" [matMenuTriggerFor]="statusMenu">
+                <!--  Basic Information Warehouse-->
+                <app-basic-info *ngIf="section =='basic'" [event]="event" [events]="events" [editMode]="editMode" (EventOutput)="eventForm = $event"></app-basic-info>
 
-                                <!-- Activo -->
-                                <ng-container *ngIf="(event.status|lowercase) === 'active'">
-                                    <mat-icon class="icon-size-5 text-current" svgIcon="heroicons_solid:check-circle"></mat-icon>
-                                    <span class="ml-2 mr-1 text-md font-medium">Activo</span>
-                                </ng-container>
+                <!-- Warehouse Organization -->
+                <app-tickets *ngIf="section =='tickets'" [event]="event" [editMode]="editMode" [tickets$]="tickets$"> </app-tickets>
 
-                                <!-- Inactivo -->
-                                <ng-container *ngIf="(event.status|lowercase) === 'inactive'">
-                                    <mat-icon class="icon-size-4 text-current" svgIcon="heroicons_solid:x-circle"></mat-icon>
-                                    <span class="ml-2 mr-1 text-md font-medium">Inactivo</span>
-                                </ng-container>
-                            </div>
-                            <mat-menu #statusMenu="matMenu">
-                                <!-- Activo -->
-                                <button [ngClass]="{'bg-hover': (event.status|lowercase) === 'active'}" mat-menu-item (click)="setStatus('Active')">
-                                    <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
-                                        <span class="font-medium">Activo</span>
-                                        <mat-icon class="mr-0 icon-size-4 text-green-600 dark:text-green-500"
-                                                  svgIcon="heroicons_solid:check-circle"></mat-icon>
-                                    </span>
-                                </button>
-                                <!-- Inactivo -->
-                                <button [ngClass]="{'bg-hover': (event.status|lowercase) === 'inactive'}" mat-menu-item (click)="setStatus('Inactive')">
-                                    <span class="inline-flex items-center justify-between w-full min-w-30 leading-5">
-                                        <span class="font-medium">Inactivo</span>
-                                        <mat-icon class="mr-0 icon-size-4 text-red-600 dark:text-red-500"
-                                                  svgIcon="heroicons_solid:x-circle"></mat-icon>
-                                    </span>
-                                </button>
-                            </mat-menu>
-                        </div>
-                    </div>
-
-                    <div class="mt-4">
-                        <mat-form-field class="w-full">
-                            <mat-label>Teléfono</mat-label>
-                            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:phone"></mat-icon>
-                            <input matInput maxlength="10" minlength="6" [formControlName]="'phone'" placeholder="Telefono" [spellcheck]="false" [errorStateMatcher]="matcher">
-                            <mat-error *ngIf="eventForm.get('phone').errors">
-                                {{matcher.getErrorMessage('phone', eventForm)}}
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-
-                    <div class="mt-4">
-                        <mat-form-field class="w-full ">
-                            <mat-label>Ciudad</mat-label>
-                            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:mail"></mat-icon>
-                            <input matInput [formControlName]="'city'" placeholder="Ciudad" [spellcheck]="false" [errorStateMatcher]="matcher">
-                            <mat-error *ngIf="eventForm.get('city').errors">
-                                {{matcher.getErrorMessage('city', eventForm)}}
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-
-                    <div class="mt-4">
-                        <mat-form-field class="w-full ">
-                            <mat-label>Direccion</mat-label>
-                            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:location-marker"></mat-icon>
-                            <input matInput [formControlName]="'address'" placeholder="direccion" [spellcheck]="false" [errorStateMatcher]="matcher">
-                            <mat-error *ngIf="eventForm.get('address').errors">
-                                {{matcher.getErrorMessage('address', eventForm)}}
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-
-                    <div class="mt-4">
-                        <mat-form-field class="w-full ">
-                            <mat-label>Descripcion</mat-label>
-                            <textarea matInput [formControlName]="'description'" placeholder="Descripcion" [spellcheck]="false" [errorStateMatcher]="matcher" cols="30" rows="10"></textarea>
-                            <mat-error *ngIf="eventForm.get('description').errors">
-                                {{matcher.getErrorMessage('description', eventForm)}}
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-
+                <ng-container *ngIf="section === 'basic'">
                     <!-- Actions -->
-                    <div class="flex items-center mt-10 -mx-6 sm:-mx-12 py-4 pr-4 pl-1 sm:pr-12 sm:pl-7 border-t bg-gray-50 dark:bg-transparent ">
-                        <!-- Delete -->
-                        <ng-container *ngIf="event.key !=''">
-                            <button mat-button color="warn" matTooltip="Eliminar" (click)="deleteEvent()">
+                    <div class="flex items-center mx-6 sm:-mx-12 py-4 pr-4 pl-1 sm:pr-12 sm:pl-7 border-t bg-gray-50 dark:bg-transparent mt-10">
+                        <ng-container *ngIf="event.key != ''">
+                            <!-- Delete -->
+                            <button class="m-auto" mat-button color="warn" matTooltip="Eliminar" (click)="deleteEvent()">
                                 Eliminar
                             </button>
                         </ng-container>
                         <!-- Cancel -->
-                        <button class="ml-auto" mat-button matTooltip="Cancelar" (click)="toggleEditMode(false)">
+                        <button *ngIf="event.key != ''" class="m-auto" mat-button matTooltip="volver" (click)="toggleEditMode(false, 'basic')">
+                            Cancelar
+                        </button>
+                        <button *ngIf="!event.key" class="m-auto" mat-button matTooltip="volver" [routerLink]="['../']">
                             Cancelar
                         </button>
                         <!-- Save -->
-                        <button class="ml-2" mat-flat-button color="primary" [disabled]="eventForm.invalid" matTooltip="Guardar " (click)="updateEvent()">
+                        <button class="mx-auto" mat-flat-button color="primary" [disabled]="eventForm.invalid" matTooltip="Guardar" (click)="updateEvent()">
                             Guardar
                         </button>
                     </div>
-
-                </form>
+                </ng-container>
             </div>
         </div>
     </ng-container>

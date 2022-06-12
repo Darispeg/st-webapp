@@ -1,15 +1,16 @@
-import { DOCUMENT } from "@angular/common";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { MatPaginator } from "@angular/material/paginator";
-import { MatDrawer } from "@angular/material/sidenav";
-import { ActivatedRoute, Router } from "@angular/router";
-import { FuseMediaWatcherService } from "@fuse/services/media-watcher";
-import { fromEvent, Observable, Subject } from "rxjs";
-import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { Event } from "../../models/events.types";
-import { EventsService } from "../events.service";
-import { FileInfoService } from "../files/files.service";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
+import { MatDrawer } from '@angular/material/sidenav';
+import { fromEvent, Observable, Subject, merge, throwError } from 'rxjs';
+import { catchError, filter, map, switchMap, takeUntil } from 'rxjs/operators';
+import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
+import { MatPaginator } from '@angular/material/paginator';
+import { User } from '../../models/users.types';
+import { Role } from '../../models/roles.types';
+import { UsersService } from '../../users/users.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector       : 'areas-list',
@@ -17,17 +18,18 @@ import { FileInfoService } from "../files/files.service";
     encapsulation  : ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EventsListComponent implements OnInit, OnDestroy
+export class RolesListComponent implements OnInit, OnDestroy
 {
-
     @ViewChild('matDrawer', {static: true}) matDrawer: MatDrawer;
     @ViewChild(MatPaginator) _paginator: MatPaginator;
-    events$: Observable<Event[]>;
+
+    users$: Observable<User[]>;
+    roles$: Observable<Role[]>
     drawerMode: 'side' | 'over';
     searchInputControl: FormControl = new FormControl();
-    selectedEvent: Event;
+    selectedUser: User;
     isLoading: boolean = false;
-    totalCount: number = 0;
+    totalCount : number;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -37,35 +39,22 @@ export class EventsListComponent implements OnInit, OnDestroy
         @Inject(DOCUMENT) private _document: any,
         private _router: Router,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
-        private _eventsService: EventsService,
-        private _fileInfoService: FileInfoService
+        private _userService: UsersService,
+        private _snackBar: MatSnackBar
     )
     {}
 
-    createEvent(): void
+    ngOnInit(): void
     {
-        this._router.navigate(['./00000000-0000-0000-0000-000000000000'], {relativeTo: this._activatedRoute});
-        this._changeDetectorRef.markForCheck();
-    }
+        this.users$ = this._userService.users$;
 
-    ngOnInit(): void {
-        this.events$ = this._eventsService.events$;
-        this._eventsService.events$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((events) => {
-                this.totalCount = events.length;
-            });
-
-        this._eventsService.event$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((Event: Event) => {
-                this.selectedEvent = Event;
+        this.users$.pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((users: User[]) => {
+                this.totalCount = users.length;
                 this._changeDetectorRef.markForCheck();
             });
-        
-        this._fileInfoService.files$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe();
+
+        this.roles$ = this._userService.roles$;
 
         this.searchInputControl.valueChanges
             .pipe(
@@ -74,7 +63,7 @@ export class EventsListComponent implements OnInit, OnDestroy
                     this.matDrawer.close();
                     this._router.navigate(['./'], {relativeTo: this._activatedRoute});
                     this.isLoading = true;
-                    return this._eventsService.getEvents()
+                    return this._userService.getUsers()
                 }),
                 map(() => {
                     this.isLoading = false;
@@ -87,7 +76,7 @@ export class EventsListComponent implements OnInit, OnDestroy
         this.matDrawer.openedChange.subscribe((opened) => {
             if( !opened )
             {
-                this.selectedEvent = null;
+                this.selectedUser = null;
                 this._changeDetectorRef.markForCheck();
             }
         });
@@ -107,16 +96,17 @@ export class EventsListComponent implements OnInit, OnDestroy
                 this._changeDetectorRef.markForCheck();
             });
 
+        // Listen for shortcuts
         fromEvent(this._document, 'keydown')
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 filter<KeyboardEvent>(event =>
-                    (event.ctrlKey === true || event.metaKey)
-                    && (event.key === '/')
+                    (event.ctrlKey === true || event.metaKey) // Ctrl or Cmd
+                    && (event.key === '/') // '/'
                 )
             )
             .subscribe(() => {
-                this.createEvent();
+                this.createRole();
             });
     }
 
@@ -131,8 +121,27 @@ export class EventsListComponent implements OnInit, OnDestroy
         this._changeDetectorRef.markForCheck();
     }
 
+    changeRoleToUser(user: User, role: Role): void
+    {
+        this._userService.changeRoleToUser(user.key, role.key).subscribe();
+    }
+
+    createRole(): void
+    {
+        this._router.navigate(['./00000000-0000-0000-0000-000000000000'], {relativeTo: this._activatedRoute});
+        this._changeDetectorRef.markForCheck();
+    }
+
     trackByFn(index: number, item: any): any
     {
         return item.Key || index;
+    }
+
+    snackBar(message) {
+        this._snackBar.open(message, '', {
+            duration: 3000,
+            verticalPosition: 'bottom',
+            panelClass: ['bg-blue-800', 'font-bold', 'text-gray-100']
+        });
     }
 }

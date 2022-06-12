@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, of, throwError } from "rxjs";
 import { User } from "../models/users.types";
 import { environment } from "environments/environment";
 import { map, take, tap, switchMap, filter } from 'rxjs/operators';
+import { Role } from "../models/roles.types";
 
 
 @Injectable({
@@ -14,10 +15,20 @@ UsersService
 {
     private _user: BehaviorSubject<User | null> = new BehaviorSubject(null);
     private _users: BehaviorSubject<User[] | null> = new BehaviorSubject(null);
+    private _roles: BehaviorSubject<Role[] | null> = new BehaviorSubject(null);
+    private _message: BehaviorSubject<string | null> = new BehaviorSubject(null);
+
+
+    roleToUser : any;
 
     private _new:string = '00000000-0000-0000-0000-000000000000';
 
     constructor(private _httpClient: HttpClient){}
+
+    get roles$(): Observable<Role[]>
+    {
+        return this._roles.asObservable();
+    }
 
     get users$(): Observable<User[]>
     {
@@ -39,6 +50,16 @@ UsersService
         );
     }
 
+    getRoles(): Observable<Role[]>
+    {
+        return this._httpClient.get<Role[]>(`${environment.APIurl}/roles`)
+        .pipe(
+            tap((roles) => {
+                this._roles.next(roles);
+            })
+        );
+    }
+
     getUserByKey(key: string): Observable<User>
     {
         if(key === this._new)
@@ -53,7 +74,8 @@ UsersService
                         email: '',
                         password: '',
                         phone: '',
-                        status: 'active'
+                        status: 'active',
+                        roles: []
                     };
                     this._user.next(user);
                     return user;
@@ -129,5 +151,20 @@ UsersService
                 })
             ))
         )
+    }
+
+    changeRoleToUser(userKey: string, roleKey: string): Observable<string>
+    {
+        this.roleToUser = {
+            userKey: userKey,
+            roleKey: roleKey
+        };
+
+        return this._httpClient.put<any>(`${environment.APIurl}/users/role`, this.roleToUser).pipe(
+            tap((message) => {
+                console.log(message)
+                this._message.next(message);
+            })
+        );
     }
 }

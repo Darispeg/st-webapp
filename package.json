@@ -13,6 +13,7 @@
         "lint": "ng lint"
     },
     "dependencies": {
+        "@agm/core": "^3.0.0-beta.0",
         "@angular/animations": "12.1.4",
         "@angular/cdk": "12.1.4",
         "@angular/common": "12.1.4",
@@ -33,6 +34,7 @@
         "@fullcalendar/rrule": "4.4.2",
         "@fullcalendar/timegrid": "4.4.2",
         "@ngneat/transloco": "2.22.0",
+        "@types/googlemaps": "^3.43.3",
         "apexcharts": "3.27.3",
         "crypto-js": "3.3.0",
         "highlight.js": "11.1.0",

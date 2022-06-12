@@ -7,7 +7,8 @@ export interface Event
     address : string,
     city : string,
     phone : string,
+    urlImage: string,
     location : string,
     dateTime : Date,
-    status : string
+    status : string,
 }

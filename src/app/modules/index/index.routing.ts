@@ -1,26 +1,26 @@
 import { Route } from '@angular/router';
-import { EventsDetailsComponent } from './details/details.component';
-import { EventsComponent } from './events.component';
-import { CanDeactivateEventsDetails } from './events.guards';
-import { EventsEventResolver, EventsResolver } from './events.resolvers';
-import { FilesResolver } from './files/files.resolvers';
-import { EventsListComponent } from './list/list.component';
+import { IndexDetailsComponent } from './details/details.component';
+import { IndexListComponent } from './list/list.component';
+import { IndexComponent } from './index.component';
+import { EventsEventResolver, EventsResolver } from '../admin/events/events.resolvers';
+import { FilesResolver } from '../admin/events/files/files.resolvers';
+import { CanDeactivateEventsDetails } from '../admin/events/events.guards';
 
-export const eventsRoutes: Route[] = [
+export const indexRoutes : Route[] = [
     {
         path     : '',
-        component: EventsComponent,
+        component: IndexComponent,
         children : [
             {
                 path     : '',
-                component : EventsListComponent,
+                component : IndexListComponent,
                 resolve   : {
                     tasks : EventsResolver, FilesResolver
                 },
                 children : [
                     {
                         path          : ':key',
-                        component     : EventsDetailsComponent,
+                        component     : IndexDetailsComponent,
                         resolve       : {
                             tasks: EventsEventResolver
                         },

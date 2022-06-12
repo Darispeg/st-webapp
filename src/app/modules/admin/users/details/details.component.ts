@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subject, throwError } from "rxjs";
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Observable, Subject, throwError } from "rxjs";
 import { MatDrawerToggleResult } from "@angular/material/sidenav";
 import { catchError, takeUntil } from 'rxjs/operators';
 import { FuseConfirmationService } from "@fuse/services/confirmation";
@@ -10,6 +10,7 @@ import { UsersListComponent } from '../list/list.component';
 import { MyErrorStatusMatcher } from "app/shared/error-status-matcher";
 import { UsersService } from "../users.service";
 import { User } from "../../models/users.types";
+import { Role } from "../../models/roles.types";
 
 @Component({
     selector: 'areas-details',
@@ -23,6 +24,9 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
     editMode: boolean = false;
     users: User[];
     user: User;
+    roles: Role[];
+    roles$: Observable<Role[]>;
+    checkedRoles: string[] = [];
 
     userForm: FormGroup;
     matcher = new MyErrorStatusMatcher();
@@ -51,6 +55,7 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
             email: ['', [Validators.maxLength(50), Validators.email]],
             password: [''],
             status: ['Active', [Validators.required]],
+            roles: this._formBuilder.array([])
         });
 
         this._userService.users$
@@ -60,12 +65,55 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
                 this._changeDetectorRef.markForCheck();
             });
 
+        this._userService.roles$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((Roles: Role[]) => {
+                this.roles = Roles;
+                this._changeDetectorRef.markForCheck();
+            });
+
+        this.roles$ = this._userService.roles$;
+
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((User: User) => {
                 this._usersListComponent.matDrawer.open();
                 this.user = User;
+
+                this.checkedRoles = [];
+
+                if(User.roles != null)
+                {
+                    for (let role of User.roles) {
+                        this.checkedRoles.push(role.name);
+                    }
+                }
+
+                console.log(this.checkedRoles);
+
                 this.userForm.patchValue(User);
+
+                const featureFormGroups = [];
+
+                if (User.roles != undefined) {
+                    User.roles.forEach((role) => {
+                        featureFormGroups.push(
+                            this._formBuilder.group({
+                                key: [role.key],
+                                name: [role.name],
+                                description: [role.description]
+                            })
+                        );
+                    });
+                }
+
+               (this.userForm.get('roles') as FormArray).clear();
+
+                featureFormGroups.forEach((userFormGroup) => {
+                    (this.userForm.get('roles') as FormArray).push(userFormGroup);
+                });
+
+                console.log(this.userForm.value);
                 this.toggleEditMode(User.key ? false : true);
                 this._changeDetectorRef.markForCheck();
             });
@@ -198,5 +246,10 @@ export class UsersDetailsComponent implements OnInit, OnDestroy {
             verticalPosition: 'bottom',
             panelClass: ['bg-blue-800', 'font-bold', 'text-gray-100']
         });
+    }
+
+    trackByFn(index: number, item: any): any
+    {
+        return item.Key || index;
     }
 }

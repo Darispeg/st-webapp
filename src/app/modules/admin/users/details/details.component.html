@@ -86,6 +86,16 @@
                         </div>
                     </ng-container>
 
+                    <!-- Roles -->
+                    <ng-container *ngIf="user.roles">
+                        <div class="flex">
+                            <mat-icon svgIcon="heroicons_outline:key"></mat-icon>
+                            <ng-container *ngFor="let role of user.roles">
+                                <div class="max-w-none ml-6 prose prose-sm">{{role.name}}</div>
+                            </ng-container>
+                        </div>
+                    </ng-container>
+
                     <!-- created Date -->
                     <ng-container *ngIf="user.createdDate">
                         <div class="flex">
@@ -200,17 +210,6 @@
                             <input matInput [formControlName]="'email'" placeholder="Email" [spellcheck]="false" [errorStateMatcher]="matcher">
                             <mat-error *ngIf="userForm.get('email').errors">
                                 {{matcher.getErrorMessage('email', userForm)}}
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-
-                    <div class="mt-4">
-                        <mat-form-field class="w-full ">
-                            <mat-label>Password</mat-label>
-                            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:code"></mat-icon>
-                            <input matInput [formControlName]="'password'" placeholder="password" [spellcheck]="false" [errorStateMatcher]="matcher">
-                            <mat-error *ngIf="userForm.get('password').errors">
-                                {{matcher.getErrorMessage('password', userForm)}}
                             </mat-error>
                         </mat-form-field>
                     </div>

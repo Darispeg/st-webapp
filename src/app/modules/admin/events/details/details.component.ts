@@ -1,14 +1,17 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MatDialog } from "@angular/material/dialog";
 import { MatDrawerToggleResult } from "@angular/material/sidenav";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ActivatedRoute, Router } from "@angular/router";
 import { FuseConfirmationService } from "@fuse/services/confirmation";
 import { MyErrorStatusMatcher } from "app/shared/error-status-matcher";
-import { Subject, throwError } from "rxjs";
+import { Observable, Subject, throwError } from "rxjs";
 import { catchError, takeUntil } from "rxjs/operators";
 import { Event } from "../../models/events.types";
+import { Ticket } from "../../models/tickets.types";
 import { EventsService } from "../events.service";
+import { FileComponentDialog } from "../files/file.component";
 import { EventsListComponent } from "../list/list.component";
 
 
@@ -22,8 +25,11 @@ export class EventsDetailsComponent implements OnInit, OnDestroy {
 
     _query: string = '';
     editMode: boolean = false;
+    section: string = 'basic';
     events: Event[];
     event: Event;
+    tickets$: Observable<Ticket[]>;
+    selectedTicket: Ticket;
 
     eventForm: FormGroup;
     matcher = new MyErrorStatusMatcher();
@@ -37,7 +43,8 @@ export class EventsDetailsComponent implements OnInit, OnDestroy {
         private _activatedRoute: ActivatedRoute,
         private _snackBar: MatSnackBar,
         private _eventsListComponent: EventsListComponent,
-        private _eventService: EventsService
+        private _eventService: EventsService,
+        private dialog: MatDialog
     ){}
 
     ngOnInit(): void {
@@ -51,7 +58,7 @@ export class EventsDetailsComponent implements OnInit, OnDestroy {
             city: ['', [Validators.maxLength(50)]],
             category: ['', [Validators.maxLength(50)]],
             address: ['', [Validators.maxLength(50)]],
-            location: ['', [Validators.maxLength(50)]],
+            location: [''],
             status: ['Active', [Validators.required]],
         });
 
@@ -68,7 +75,7 @@ export class EventsDetailsComponent implements OnInit, OnDestroy {
                 this._eventsListComponent.matDrawer.open();
                 this.event = Event;
                 this.eventForm.patchValue(Event);
-                this.toggleEditMode(Event.key ? false : true);
+                this.toggleEditMode(Event.key ? false : true, 'basic');
                 this._changeDetectorRef.markForCheck();
             });
 
@@ -87,13 +94,18 @@ export class EventsDetailsComponent implements OnInit, OnDestroy {
         return this._eventsListComponent.matDrawer.close();
     }
 
-    toggleEditMode(editMode: boolean | null = null): void {
+    toggleEditMode(editMode: boolean | null = null, section: string): void {
         if (editMode === null) {
             this.editMode = !this.editMode;
         }
         else {
             this.editMode = editMode;
+
+            this._eventService.getTicketsEvent(this.event.key).subscribe();
+            this.tickets$ = this._eventService.tickets$
         }
+
+        this.section = section;
 
         if (!this.editMode && !this.event.key) {
             this._router.navigate(['../'], { relativeTo: this._activatedRoute });
@@ -144,7 +156,7 @@ export class EventsDetailsComponent implements OnInit, OnDestroy {
 
                         this._eventService.getEvents().subscribe();
                         this.snackBar('Evento eliminado correctamente');
-                        this.toggleEditMode(false);
+                        this.toggleEditMode(false, 'basic');
                     });
 
                 this._changeDetectorRef.markForCheck();
@@ -165,7 +177,7 @@ export class EventsDetailsComponent implements OnInit, OnDestroy {
                 )
                 .subscribe((Event) => {
                     this.event = Event;
-                    this.toggleEditMode(false);
+                    this.toggleEditMode(false, '');
                     this._router.navigate(['../', this.event.key], { relativeTo: this._activatedRoute });
                     this.snackBar('Nuevo Evento Agregado Correctamente');
                 });
@@ -180,7 +192,7 @@ export class EventsDetailsComponent implements OnInit, OnDestroy {
                     })
                 )
                 .subscribe(() => {
-                    this.toggleEditMode(false);
+                    this.toggleEditMode(false, '');
                     this._eventService.getEvents().subscribe();
 
                     this.snackBar('Evento Modificado Correctamente');
@@ -199,5 +211,33 @@ export class EventsDetailsComponent implements OnInit, OnDestroy {
             verticalPosition: 'bottom',
             panelClass: ['bg-blue-800', 'font-bold', 'text-gray-100']
         });
+    }
+
+    openDialog(): void{
+        const dialogRef = this.dialog.open(FileComponentDialog, {
+            width: '600px',
+            height: '500px',
+            data: { eventKey : this.event.key, name : this.event.name, urlImage: this.event.urlImage }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            console.log('Close', result);
+        })
+    }
+
+    toggleTickets(ticket: Ticket)
+    {
+        if ( this.selectedTicket && this.selectedTicket.key === ticket.key )
+        {
+            this.closeDetails();
+            return;
+        }
+
+        this.selectedTicket = ticket;
+    }
+
+    closeDetails(): void
+    {
+        this.selectedTicket = null;
     }
 }

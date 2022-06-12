@@ -15,30 +15,25 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedModule } from 'app/shared/shared.module';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { PipesModule } from 'app/core/pipes/pipes.module';
-import { MatPaginatorIntl, MatPaginatorModule } from '@angular/material/paginator';
-import { MyCustomPaginatorIntl } from '../../../shared/paginator-intl';
-import { EventsComponent } from './events.component';
-import { EventsListComponent } from './list/list.component';
-import { EventsDetailsComponent } from './details/details.component';
-import { eventsRoutes } from './events.routing';
-import { NoSanitizePipe } from 'app/shared/no-sanitize-pipe';
-import { MatDialogModule } from '@angular/material/dialog';
-import { FileComponentDialog } from './files/file.component';
-import { BasicInfoComponent } from './basic-info/basic-info.component';
-import { TicketsComponent } from './tickets/tickets.component';
+import { IndexComponent } from './index.component';
+import { indexRoutes } from './index.routing';
+import { IndexListComponent } from './list/list.component';
+import { IndexDetailsComponent } from './details/details.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
+import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator';
+import { MyCustomPaginatorIntl } from 'app/shared/paginator-intl';
+import { NoSanitizePipeIndex } from 'app/shared/no-sanitize-pipe';
 
 @NgModule({
     declarations: [
-        EventsComponent,
-        EventsListComponent,
-        EventsDetailsComponent,
-        FileComponentDialog,
-        NoSanitizePipe,
-        BasicInfoComponent,
-        TicketsComponent
+        IndexComponent,
+        IndexListComponent,
+        IndexDetailsComponent,
+        NoSanitizePipeIndex
     ],
     imports: [
-        RouterModule.forChild(eventsRoutes),
+        RouterModule.forChild(indexRoutes),
         MatButtonModule,
         MatCheckboxModule,
         MatDividerModule,
@@ -54,13 +49,14 @@ import { TicketsComponent } from './tickets/tickets.component';
         PipesModule,
         SharedModule,
         MatSnackBarModule,
-        MatPaginatorModule,
-        MatDialogModule,
+        MatDatepickerModule,
+        MatMomentDateModule,
+        MatPaginatorModule
     ],
     providers : [
         { provide: MatPaginatorIntl, useClass: MyCustomPaginatorIntl }
     ]
 })
-export class EventsModule{
+export class IndexModule{
 
 }
