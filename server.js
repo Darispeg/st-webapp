@@ -1,19 +1,32 @@
-//Install express server
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 const path = require('path');
-
 const app = express();
+const port = process.env.PORT || 3000
 
-// Serve only the static files form the dist directory
-app.use(express.static(path.join(__dirname, 'src')));
+app.use(express.static(path.join(__dirname, '/src')));
 
-app.get('/*', (req, res) =>
-    res.sendFile('sign-in.component.html', {root: 'src/app/modules/auth/sign-in/'}),
-);
+app.use(bodyParser.json());
 
-app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "build", "sign-in.component.html"));
-  });
+app.use(cors());
 
-// Start the app by listening on the default Heroku port
-app.listen(process.env.PORT || 8080);
+const forceSSL = function () {
+    return function (req, res, next) {
+      if (req.headers['x-forwarded-proto'] !== 'https') {
+        return res.redirect(
+          ['https://', req.get('Host'), req.url].join('')
+        );
+      }
+      next();
+    }}
+
+app.use(forceSSL());    
+
+app.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname + '/src/index.html'));
+        });
+    
+    app.listen(port, () => {
+    console.log('Server started on port '+port);
+    });
