@@ -5,10 +5,10 @@ const path = require('path');
 const app = express();
 
 // Serve only the static files form the dist directory
-app.use(express.static('./src/app/'));
+app.use(express.static('./src/'));
 
 app.get('/*', (req, res) =>
-    res.sendFile('sign-in.component.html', {root: 'src/app/modules/auth/sign-in'}),
+    res.sendFile('sign-in.component.html', {root: 'src/app/modules/auth/sign-in/'}),
 );
 
 app.get("*", (req, res) => {
