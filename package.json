@@ -12,7 +12,7 @@
         "test": "ng test",
         "lint": "ng lint",
         "heroku-postbuild": "ng build --prod",
-        "postinstall": "ng build"
+        "heroku-postinstall": "ng build"
     },
     "dependencies": {
         "@angular/animations": "12.1.4",
