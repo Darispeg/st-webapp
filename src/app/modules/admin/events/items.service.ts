@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, of, throwError } from "rxjs";
 import { environment } from "environments/environment";
 import { map, take, tap, switchMap, filter } from 'rxjs/operators';
-import { Event } from "../models/events.types";
+import { Item } from "../models/items.types";
 import { Ticket } from "../models/tickets.types";
 
 
@@ -11,24 +11,24 @@ import { Ticket } from "../models/tickets.types";
     providedIn: 'root'
 })
 export class
-EventsService
+ItemsService
 {
-    private _event: BehaviorSubject<Event | null> = new BehaviorSubject(null);
-    private _events: BehaviorSubject<Event[] | null> = new BehaviorSubject(null);
+    private _item: BehaviorSubject<Item | null> = new BehaviorSubject(null);
+    private _items: BehaviorSubject<Item[] | null> = new BehaviorSubject(null);
     private _tickets: BehaviorSubject<Ticket[] | null> = new BehaviorSubject(null);
 
     private _new:string = '00000000-0000-0000-0000-000000000000';
 
     constructor(private _httpClient: HttpClient){}
 
-    get events$(): Observable<Event[]>
+    get items$(): Observable<Item[]>
     {
-        return this._events.asObservable();
+        return this._items.asObservable();
     }
 
-    get event$(): Observable<Event>
+    get item$(): Observable<Item>
     {
-        return this._event.asObservable();
+        return this._item.asObservable();
     }
 
     get tickets$(): Observable<Ticket[]>
@@ -36,47 +36,45 @@ EventsService
         return this._tickets.asObservable();
     }
 
-    getEvents(): Observable<Event[]>
+    getItems(): Observable<Item[]>
     {
-        return this._httpClient.get<Event[]>(`${environment.APIurl}/events`)
+        return this._httpClient.get<Item[]>(`${environment.APIurl}/events`)
         .pipe(
             tap((events) => {
-                this._events.next(events);
+                this._items.next(events);
             })
         );
     }
 
-    getEventByKey(key: string): Observable<Event>
+    getItemByKey(key: string): Observable<Item>
     {
         if(key === this._new)
         {
-            return this._event.pipe(
+            return this._item.pipe(
                 take(1),
                 map(() => {
-                    const event : Event = {
+                    const event : Item = {
                         key : '',
                         name: '',
                         category : '',
+                        stock : 1,
+                        unitOfMeasurement : '',
+                        price : 0,
                         description : '',
-                        address : '',
-                        city : '',
-                        phone: '',
+                        status: 'active',
                         urlImage: '',
-                        location : '',
-                        dateTime : undefined,
-                        status: 'active'
                     };
-                    this._event.next(event);
+                    this._item.next(event);
                     return event;
                 })
             );
         }
 
-        return this._events.pipe(
+        return this._items.pipe(
             take(1),
             map((Events) => {
                 const Event = Events.find(item => item['key'] ===  key) || null;
-                this._event.next(Event);
+                this._item.next(Event);
                 return Event;
             }),
             switchMap((Event) => {
@@ -89,36 +87,36 @@ EventsService
         );
     }
 
-    createEvent(newEvent: Event): Observable<Event>
+    createItem(newItem: Item): Observable<Item>
     {
-        return this.events$.pipe(
+        return this.items$.pipe(
             take(1),
-            switchMap(events => this._httpClient.post<Event>(`${environment.APIurl}/events`, newEvent).pipe(
-                map((newEvent) => {
-                    this._events.next([newEvent, ...events]);
-                    return newEvent;
+            switchMap(items => this._httpClient.post<Item>(`${environment.APIurl}/events`, newItem).pipe(
+                map((newItem) => {
+                    this._items.next([newItem, ...items]);
+                    return newItem;
                 })
             ))
         )
     }
 
-    updateEvent(key: string, _update: Event): Observable<Event>
+    updateItem(key: string, _update: Item): Observable<Item>
     {
-        return this.events$.pipe(
+        return this.items$.pipe(
             take(1),
-            switchMap(events => this._httpClient.put<Event>(`${environment.APIurl}/events/${key}`, _update)
+            switchMap(events => this._httpClient.put<Item>(`${environment.APIurl}/events/${key}`, _update)
             .pipe(
                 map((updateEvent) => {
                     const index = events.findIndex(item => item['key'] === key);
                     events[index] = updateEvent;
-                    this._events.next(events);
+                    this._items.next(events);
                     return updateEvent;
                 }),
-                switchMap(updateEvent => this.event$.pipe(
+                switchMap(updateEvent => this.item$.pipe(
                     take(1),
                     filter(item => item && item['key'] === key),
                     tap(() => {
-                        this._event.next(updateEvent);
+                        this._item.next(updateEvent);
                         return updateEvent;
                     })
                 ))
@@ -126,16 +124,16 @@ EventsService
         );
     }
 
-    deleteEvent(key: string): Observable<boolean>
+    deleteItem(key: string): Observable<boolean>
     {
-        return this.events$.pipe(
+        return this.items$.pipe(
             take(1),
             switchMap(events => this._httpClient.delete(`${environment.APIurl}/events/${key}`)
             .pipe(
                 map((isDeleted: boolean) => {
                     const index = events.findIndex(item => item['key'] === key);
                     events.splice(index, 1);
-                    this._events.next(events);
+                    this._items.next(events);
                     return isDeleted;
                 })
             ))

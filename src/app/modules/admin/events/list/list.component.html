@@ -10,7 +10,7 @@
                 <div class="flex flex-col sm:flex-row md:flex-col flex-auto justify-between py-8 px-6 md:px-8 border-b">
                     <!-- Title -->
                     <div>
-                        <div class="text-4xl font-extrabold tracking-tight leading-none">Eventos</div>
+                        <div class="text-4xl font-extrabold tracking-tight leading-none">Items</div>
                         <div class="ml-0.5 font-medium text-secondary">
                             <ng-container *ngIf="totalCount > 0">
                                 {{totalCount}}
@@ -40,30 +40,20 @@
                     <div class="inset-x-0 bottom-0" *ngIf="isLoading">
                         <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
                     </div>
-                    <ng-container *ngIf="events$ | async as events">
-                        <ng-container *ngIf="events.length; else empty">
-                            <ng-container *ngFor="let event of events; let i = index; trackBy: trackByFn">
-                                <!-- Events -->
-                                <a class="z-20 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b" [ngClass]="{'hover:bg-gray-100': !selectedEvent || selectedEvent.key !== event.key,
-                                    'bg-primary-50' : selectedEvent && selectedEvent.key === event.key}" [routerLink]="['./', event.key]">
+                    <ng-container *ngIf="items$ | async as items">
+                        <ng-container *ngIf="items.length; else empty">
+                            <ng-container *ngFor="let item of items; let i = index; trackBy: trackByFn">
+                                <!-- items -->
+                                <a class="z-20 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b" [ngClass]="{'hover:bg-gray-100': !selectedItem || selectedItem.key !== item.key,
+                                    'bg-primary-50' : selectedItem && selectedItem.key === item.key}" [routerLink]="['./', item.key]">
                                     <div class="flex flex-0 items-center justify-center w-10 h-10 rounded-full overflow-hidden">
-
-                                        <div class="flex items-center justify-center w-full h-full rounded-full" [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': (event.status|lowercase) === 'active',
-                                        'text-red-800 bg-red-200 dark:text-red-100 dark:bg-red-500': (event.status|lowercase) === 'inactive'}">
-                                            <!-- Activo -->
-                                            <ng-container *ngIf="(event.status|lowercase) === 'active'">
-                                                <mat-icon class="icon-size-5 text-current" [svgIcon]="'heroicons_outline:check'"></mat-icon>
-                                            </ng-container>
-
-                                            <!-- Inactivo -->
-                                            <ng-container *ngIf="(event.status|lowercase) === 'inactive'">
-                                                <mat-icon class="icon-size-4 text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
-                                            </ng-container>
+                                        <div class="flex items-center justify-center w-full h-full rounded-full text-blue-800 bg-blue-200 dark:text-blue-100 dark:bg-blue-500">
+                                            <mat-icon class="icon-size-5 text-current" [svgIcon]="'heroicons_outline:puzzle'"></mat-icon>
                                         </div>
                                     </div>
                                     <div class="min-w-0 ml-4">
-                                        <div class="font-medium leading-5 truncate">{{event.name}}</div>
-                                        <div class="leading-5 truncate text-secondary">{{event.description}}</div>
+                                        <div class="font-medium leading-5 truncate">{{item.name}}</div>
+                                        <div class="leading-5 truncate text-secondary">{{item.description}}</div>
                                     </div>
                                 </a>
                             </ng-container>
@@ -71,7 +61,7 @@
                     </ng-container>
 
                     <ng-template #empty>
-                        <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No existen Eventos!</div>
+                        <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">No existen Productos!</div>
                     </ng-template>
                 </div>
             </div>

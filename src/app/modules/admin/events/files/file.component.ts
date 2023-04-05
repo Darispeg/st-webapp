@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from "@angular/core";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Observable } from "rxjs";
-import { EventsService } from "../events.service";
+import { ItemsService } from "../items.service";
 import { FileInfoService } from "./files.service";
 
 export interface DialogData {
@@ -29,7 +29,7 @@ export class FileComponentDialog
         public dialogRef: MatDialogRef<FileComponentDialog>,
         @Inject(MAT_DIALOG_DATA) public data: DialogData,
         private _filesService: FileInfoService,
-        private _eventService: EventsService
+        private _eventService: ItemsService
     ){}
 
     selectFile(event: any): void {

@@ -8,9 +8,9 @@ import { FuseConfirmationService } from "@fuse/services/confirmation";
 import { MyErrorStatusMatcher } from "app/shared/error-status-matcher";
 import { Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { EventsService } from "../events.service";
+import { ItemsService } from "../items.service";
 import { EventsListComponent } from "../list/list.component";
-import { Event } from "../../models/events.types";
+import { Item } from "../../models/items.types";
 import { FileComponentDialog } from "../files/file.component";
 
 @Component({
@@ -19,17 +19,17 @@ import { FileComponentDialog } from "../files/file.component";
 })
 export class BasicInfoComponent implements OnInit, OnDestroy  {
 
-    eventForm: FormGroup;
+    itemForm: FormGroup;
     matcher = new MyErrorStatusMatcher();
 
     @Input()
-    event: Event;
+    item: Item;
 
     @Input()
-    events: Event[];
+    items: Item[];
 
     @Input()
-    events$: Observable<Event[]>;
+    items$: Observable<Item[]>;
 
     @Input()
     editMode: boolean = false;
@@ -47,39 +47,37 @@ export class BasicInfoComponent implements OnInit, OnDestroy  {
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
         private _eventsListComponent: EventsListComponent,
-        private _eventService: EventsService,
+        private _eventService: ItemsService,
         private dialog: MatDialog
     ){}
 
     ngOnInit(): void {
         this._eventsListComponent.matDrawer.open();
 
-        this.eventForm = this._formBuilder.group({
+        this.itemForm = this._formBuilder.group({
             key: [''],
             name: ['', [Validators.required]],
+            price: [1, [Validators.required]],
+            stock: [1, [Validators.required]],
+            unitOfMeasurement: ['', [Validators.required, Validators.maxLength(100), Validators.minLength(1)]],
             description: ['', [Validators.required]],
-            phone: ['', [Validators.maxLength(50), Validators.pattern("^[0-9]*$")]],
-            city: ['', [Validators.maxLength(50)]],
-            category: ['', [Validators.maxLength(50)]],
-            address: ['', [Validators.maxLength(50)]],
-            location: [''],
-            status: ['Active', [Validators.required]],
+            category: ['', [Validators.maxLength(50), Validators.required]]
         });
 
-        this._eventService.event$
+        this._eventService.item$
         .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe((event: Event) => {
+        .subscribe((event: Item) => {
             this._eventsListComponent.matDrawer.open();
-            this.event = event;
+            this.item = event;
 
-            this.eventForm.patchValue(event);
+            this.itemForm.patchValue(event);
             
             this.toggleEditMode(event.key ? false : true, 'basic');
             
             this._changeDetectorRef.markForCheck();
         });
 
-        this.EventOutput.emit( this.eventForm );
+        this.EventOutput.emit( this.itemForm );
     }
 
     ngOnDestroy(): void {
@@ -97,7 +95,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy  {
 
         this.section = section;
 
-        if (!this.editMode && !this.event.key) {
+        if (!this.editMode && !this.item.key) {
             this._router.navigate(['../'], { relativeTo: this._activatedRoute });
         }
 
@@ -105,15 +103,15 @@ export class BasicInfoComponent implements OnInit, OnDestroy  {
     }
    
     setStatus(status): void {
-        this.eventForm.get('status').setValue(status);
-        this.event.status = status;
+        this.itemForm.get('status').setValue(status);
+        this.item.status = status;
     }
 
     openDialog(): void{
         const dialogRef = this.dialog.open(FileComponentDialog, {
             width: '600px',
             height: '500px',
-            data: { eventKey : this.event.key, name : this.event.name, urlImage: this.event.urlImage }
+            data: { eventKey : this.item.key, name : this.item.name, urlImage: this.item.urlImage }
         });
 
         dialogRef.afterClosed().subscribe(result => {

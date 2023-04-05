@@ -1,7 +1,7 @@
 <!-- Navigation -->
 <ng-container *ngIf="isScreenSmall">
     <fuse-vertical-navigation
-        class="dark bg-gray-900 print:hidden"
+        class="dark bg-gray-700 print:hidden"
         [mode]="'over'"
         [name]="'mainNavigation'"
         [navigation]="navigation.default"
@@ -9,11 +9,12 @@
         <!-- Navigation header hook -->
         <ng-container fuseVerticalNavigationContentHeader>
             <!-- Logo -->
-            <div class="flex items-center h-20 pt-6 px-8">
+            <div class="flex items-center h-20 pt-6 px-8 pb-4">
                 <img
-                    class="w-24"
-                    src="assets/images/logo/logo-text-on-dark.svg"
-                    alt="Logo image">
+                    class="w-15 h-15"
+                    src="assets/images/logo/logo-cabrera-2.png"
+                    alt="Logo image"> 
+                <span class="font-mono text-xl font-bold px-5" >Muebles Cabrera</span>
             </div>
         </ng-container>
     </fuse-vertical-navigation>
@@ -25,15 +26,16 @@
     <!-- Header -->
     <div class="relative flex flex-col flex-0 justify-center w-full h-16 sm:h-20 md:h-36 overflow-hidden z-49 shadow dark:shadow-none print:hidden">
         <!-- Top bar -->
-        <div class="relative dark flex flex-auto justify-center w-full px-4 md:px-8 bg-gray-800 dark:bg-gray-900">
+        <div class="relative dark flex flex-auto justify-center w-full px-4 md:px-8 bg-gray-700 dark:bg-gray-900">
             <div class="flex items-center w-full max-w-360 h-16 sm:h-20">
                 <!-- Logo -->
                 <ng-container *ngIf="!isScreenSmall">
                     <div class="flex items-center">
                         <img
-                            class="w-24"
-                            src="assets/images/logo/logo-text-on-dark.svg"
+                            class="w-15 h-15"
+                            src="assets/images/logo/logo-cabrera-2.png"
                             alt="Logo image">
+                            <span class="font-serif text-4xl font-bold px-5">Muebles Cabrera</span>
                     </div>
                 </ng-container>
                 <!-- Navigation toggle button -->

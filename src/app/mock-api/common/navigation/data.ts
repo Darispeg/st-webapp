@@ -10,6 +10,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:chart-square-bar'
     },
     {
+        id: 'index',
+        title: 'Index',
+        type: 'basic',
+        link: 'index',
+        icon: 'heroicons_outline:chart-square-bar'
+    },
+    {
         id   : 'admin',
         title: 'Administracion',
         subtitle : 'Area de administracion',
@@ -33,22 +40,22 @@ export const defaultNavigation: FuseNavigationItem[] = [
         },
         {
             id: 'events',
-            title : 'Eventos',
+            title : 'Items',
             type: 'basic',
-            icon: 'heroicons_outline:star',
+            icon: 'heroicons_outline:puzzle',
             link: 'admin/events'
-        },
-        {
-            id: 'index',
-            title : 'index',
-            type: 'basic',
-            icon: 'heroicons_outline:star',
-            link: 'admin/index'
         }
     ]
     }
 ];
 export const compactNavigation: FuseNavigationItem[] = [
+    {
+        id: 'index',
+        title: 'Index',
+        type: 'basic',
+        link: 'index',
+        icon: 'heroicons_outline:chart-square-bar'
+    },
     {
         id: 'dashboard',
         title: 'Dashboard',
@@ -67,6 +74,13 @@ export const compactNavigation: FuseNavigationItem[] = [
 ];
 export const futuristicNavigation: FuseNavigationItem[] = [
     {
+        id: 'index',
+        title: 'Index',
+        type: 'basic',
+        link: 'index',
+        icon: 'heroicons_outline:chart-square-bar'
+    },
+    {
         id: 'dashboard',
         title: 'Dashboard',
         type: 'basic',
@@ -83,6 +97,13 @@ export const futuristicNavigation: FuseNavigationItem[] = [
     }
 ];
 export const horizontalNavigation: FuseNavigationItem[] = [
+    {
+        id: 'index',
+        title: 'Index',
+        type: 'basic',
+        link: 'index',
+        icon: 'heroicons_outline:view-grid'
+    },
     {
         id: 'dashboard',
         title: 'Dashboard',

@@ -7,8 +7,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { FuseMediaWatcherService } from "@fuse/services/media-watcher";
 import { fromEvent, Observable, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { Event } from "../../models/events.types";
-import { EventsService } from "../events.service";
+import { Item } from "../../models/items.types";
+import { ItemsService } from "../items.service";
 import { FileInfoService } from "../files/files.service";
 
 @Component({
@@ -22,10 +22,10 @@ export class EventsListComponent implements OnInit, OnDestroy
 
     @ViewChild('matDrawer', {static: true}) matDrawer: MatDrawer;
     @ViewChild(MatPaginator) _paginator: MatPaginator;
-    events$: Observable<Event[]>;
+    items$: Observable<Item[]>;
     drawerMode: 'side' | 'over';
     searchInputControl: FormControl = new FormControl();
-    selectedEvent: Event;
+    selectedItem: Item;
     isLoading: boolean = false;
     totalCount: number = 0;
 
@@ -37,7 +37,7 @@ export class EventsListComponent implements OnInit, OnDestroy
         @Inject(DOCUMENT) private _document: any,
         private _router: Router,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
-        private _eventsService: EventsService,
+        private _eventsService: ItemsService,
         private _fileInfoService: FileInfoService
     )
     {}
@@ -49,17 +49,17 @@ export class EventsListComponent implements OnInit, OnDestroy
     }
 
     ngOnInit(): void {
-        this.events$ = this._eventsService.events$;
-        this._eventsService.events$
+        this.items$ = this._eventsService.items$;
+        this._eventsService.items$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((events) => {
                 this.totalCount = events.length;
             });
 
-        this._eventsService.event$
+        this._eventsService.item$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((Event: Event) => {
-                this.selectedEvent = Event;
+            .subscribe((Event: Item) => {
+                this.selectedItem = Event;
                 this._changeDetectorRef.markForCheck();
             });
         
@@ -74,7 +74,7 @@ export class EventsListComponent implements OnInit, OnDestroy
                     this.matDrawer.close();
                     this._router.navigate(['./'], {relativeTo: this._activatedRoute});
                     this.isLoading = true;
-                    return this._eventsService.getEvents()
+                    return this._eventsService.getItems()
                 }),
                 map(() => {
                     this.isLoading = false;
@@ -87,7 +87,7 @@ export class EventsListComponent implements OnInit, OnDestroy
         this.matDrawer.openedChange.subscribe((opened) => {
             if( !opened )
             {
-                this.selectedEvent = null;
+                this.selectedItem = null;
                 this._changeDetectorRef.markForCheck();
             }
         });

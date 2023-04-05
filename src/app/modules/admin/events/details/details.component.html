@@ -2,9 +2,9 @@
     <!-- View mode -->
     <ng-container *ngIf="!editMode">
         <!-- Header -->
-        <div class="flex items-center justify-between bg-blue-900 w-full h-16 p-6 pt-0 pb-0 sm:px-12 dark:bg-accent-700">
+        <div class="flex items-center justify-between bg-teal-600 w-full h-16 p-6 pt-0 pb-0 sm:px-12 dark:bg-accent-700">
             <div class="flex items-center justify-center">
-                <span class="font-medium text-white text-2xl truncate">Detalles del Usuario</span>
+                <span class="font-medium text-white text-2xl truncate">Detalles del Item</span>
             </div>
             <div class="flex items-center">
                 <!-- More menu -->
@@ -12,17 +12,12 @@
                     <mat-icon class="text-white" svgIcon="heroicons_outline:dots-vertical"></mat-icon>
                 </button>
                 <mat-menu #moreMenu="matMenu">
-                    <button mat-menu-item (click)="toggleEditMode(true, 'basic')">
+                    <button mat-menu-item (click)="toggleEditMode(true)">
                         <mat-icon svgIcon="heroicons_solid:pencil-alt"></mat-icon>
-                        <span class="ml-2">Editar informacion basica</span>
+                        <span class="ml-2">Editar Item</span>
                     </button>
                     <mat-divider></mat-divider>
-                    <button mat-menu-item (click)="toggleEditMode(true, 'tickets')">
-                        <mat-icon svgIcon="heroicons_solid:pencil-alt"></mat-icon>
-                        <span class="ml-2">Editar entradas del evento</span>
-                    </button>
-                    <mat-divider></mat-divider>
-                    <button mat-menu-item (click)="deleteEvent()">
+                    <button mat-menu-item (click)="deleteItem()">
                         <mat-icon class="text-red-500" svgIcon="heroicons_outline:trash"></mat-icon>
                         <span class="text-red-500">Eliminar</span>
                     </button>
@@ -40,158 +35,89 @@
             <div class="w-full max-w-3xl">
 
                 <!-- Name -->
-                <div class="mt-3 text-4xl font-bold truncate">{{event.name}}</div>
+                <div class="mt-3 text-4xl text-blue-900 font-bold truncate">{{item.name}}</div>
 
-                <!-- Status -->
-                <div class="flex flex-wrap items-center">
-                    <div>
-                        <div class="flex items-center mt-1.5 px-4 leading-9 rounded-full cursor-pointer" [ngClass]="{'text-green-800 bg-green-200 dark:text-green-100 dark:bg-green-500': (event.status|lowercase) === 'active',
-                                         'text-red-800 bg-red-200 dark:text-red-100 dark:bg-red-500': (event.status|lowercase) === 'inactive'}">
-
-                            <!-- Activo -->
-                            <ng-container *ngIf="(event.status|lowercase) === 'active'">
-                                <mat-icon class="icon-size-5 text-current" svgIcon="heroicons_solid:check-circle"></mat-icon>
-                                <span class="ml-2 mr-1 text-md font-medium">Activo</span>
-                            </ng-container>
-
-                            <!-- Inactivo -->
-                            <ng-container *ngIf="(event.status|lowercase) === 'inactive'">
-                                <mat-icon class="icon-size-4 text-current" svgIcon="heroicons_solid:x-circle"></mat-icon>
-                                <span class="ml-2 mr-1 text-md font-medium">Inactivo</span>
-                            </ng-container>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-col mt-4 pt-6 border-t space-y-8">
-
+                <div class="flex flex-col mt-4 pt-6 border-t space-y-2">
                     <!-- Image -->
-                    <ng-container *ngIf="event.urlImage">
-                        <div class="flex h-72 mt-3">
-                            <img class="rounded-lg" src="{{event.urlImage}}">
+                    <ng-container *ngIf="item.urlImage">
+                        <div class="flex h-50 w-64 mx-auto">
+                            <img class="rounded-lg" src="{{item.urlImage}}">
                         </div>
                     </ng-container>
                     <!-- Name -->
                     <div class="flex sm:items-center">
-                        <mat-icon svgIcon="heroicons_outline:archive"></mat-icon>
-                        <div class="ml-6 leading-6">{{event.name}}</div>
+                        <div class="flex">
+                            <mat-icon svgIcon="heroicons_outline:puzzle"></mat-icon>
+                            <div class="max-w-none ml-6 text-xl">                                            
+                                <span class="text-primary-500">
+                                    Nombre:
+                                </span> 
+                                    {{item.name}}</div>
+                        </div>
                     </div>
+                    <!-- Category -->
+                    <ng-container *ngIf="item.category">
+                        <div class="flex">
+                            <mat-icon svgIcon="heroicons_outline:clipboard-list"></mat-icon>
+                            <div class="ml-6 leading-6">
+                                <div class="flex flex-wrap items-center">
+                                    <div class="flex items-center justify-center py-1 px-3 mr-3 mb-3 rounded-full leading-normal cursor-pointer text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
+                                        <span class="text-sm font-medium whitespace-nowrap">{{item.category}}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- Value -->
+                    <ng-container *ngIf="item.price">
+                        <div class="flex">
+                            <mat-icon svgIcon="heroicons_outline:currency-dollar"></mat-icon>
+                            <div class="max-w-none ml-6 text-xl">                                            
+                                <span class="text-primary-500">
+                                    Precio:
+                                </span> 
+                                    $ {{item.price}}</div>
+                        </div>
+                    </ng-container>
+
+                    <!-- Unit -->
+                    <ng-container *ngIf="item.unitOfMeasurement">
+                        <div class="flex">
+                            <mat-icon svgIcon="heroicons_outline:scale"></mat-icon>
+                            <div class="max-w-none ml-6 text-xl">                                            
+                                <span class="text-primary-500">
+                                    Unidad de venta:
+                                </span> 
+                                {{item.unitOfMeasurement}}
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- Stock -->
+                    <ng-container *ngIf="item.stock">
+                        <div class="flex">
+                            <mat-icon svgIcon="heroicons_outline:chart-pie"></mat-icon>
+                            <div class="max-w-none ml-6 text-xl">                                            
+                                <span class="text-primary-500">
+                                    stock:
+                                </span> 
+                                {{item.stock}}
+                            </div>
+                        </div>
+                    </ng-container>
+
                     <!-- Description -->
                     <div class="flex sm:items-center">
-                        <mat-icon svgIcon="heroicons_outline:clipboard"></mat-icon>
-                        <div class="ml-6 leading-6">{{event.description}}</div>
+                        <div class="flex">
+                            <mat-icon svgIcon="heroicons_outline:document-text"></mat-icon>
+                            <div class="max-w-none ml-6 text-xl">                                            
+                                <span class="text-primary-500">
+                                    Descripcion:
+                                </span> 
+                                    {{item.description}}</div>
+                        </div>
                     </div>
-
-                    <!-- Phone -->
-                    <ng-container *ngIf="event.phone">
-                        <div class="flex">
-                            <mat-icon svgIcon="heroicons_outline:phone"></mat-icon>
-                            <div class="max-w-none ml-6 prose prose-sm">{{event.phone}}</div>
-                        </div>
-                    </ng-container>
-
-                    <!-- Category -->
-                    <ng-container *ngIf="event.category">
-                        <div class="flex">
-                            <mat-icon svgIcon="heroicons_outline:adjustments"></mat-icon>
-                            <div class="max-w-none ml-6 prose prose-sm">{{event.category}}</div>
-                        </div>
-                    </ng-container>
-
-                    <!-- Address -->
-                    <ng-container *ngIf="event.address">
-                        <div class="flex">
-                            <mat-icon svgIcon="heroicons_outline:location-marker"></mat-icon>
-                            <div class="max-w-none ml-6 prose prose-sm">{{event.address}}</div>
-                        </div>
-                    </ng-container>   
-                    <ng-container *ngIf="tickets$ | async as tickets">
-                        <div class="grid">
-                            <div class="grid-cols-2 sm:grid-cols-5 z-10 sticky top-0 grid gap-x-20 py-4 px-6 md:px-8 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
-                                <div class="col-span-1 sm:col-span-2">
-                                    Tipo de Entrada
-                                </div>
-                                <div class="hidden lg:block">
-                                    Stock
-                                </div>
-                                <div>Detalles</div>
-                                <div></div>
-                            </div>
-                            <ng-container *ngIf="tickets$ | async as tickets">
-                                <ng-container *ngFor="let ticket of tickets">
-                                    <div class="grid-cols-2 sm:grid-cols-4 grid items-center gap-x-20 py-3 px-6 md:px-8 border-b" [ngClass]="{'text-gray-800 bg-gray-200 dark:text-gray-100 dark:bg-gray-500': selectedTicket?.key === ticket.key}">
-                                        <!-- Name -->
-                                        <div class="col-span-1 sm:col-span-2">
-                                            {{ticket.type}}
-                                        </div>
-            
-                                        <!-- Stock -->
-                                        <div class="hidden lg:flex items-center">
-                                            <div class="min-w-4">{{ticket.available}}</div>
-                                            <!-- Low stock -->
-                                            <div class="flex items-end ml-2 w-1 h-4 bg-red-200 rounded overflow-hidden" *ngIf="ticket.available < 20">
-                                                <div class="flex w-full h-1/3 bg-red-600"></div>
-                                            </div>
-                                            <!-- Medium stock -->
-                                            <div class="flex items-end ml-2 w-1 h-4 bg-orange-200 rounded overflow-hidden" *ngIf="ticket.available >= 20 && ticket.available < 30">
-                                                <div class="flex w-full h-2/4 bg-orange-400"></div>
-                                            </div>
-                                            <!-- High stock -->
-                                            <div class="flex items-end ml-2 w-1 h-4 bg-green-100 rounded overflow-hidden" *ngIf="ticket.available >= 30">
-                                                <div class="flex w-full h-full bg-green-400"></div>
-                                            </div>
-                                        </div>
-            
-                                        <!-- ticket button -->
-                                        <div>
-                                            <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button (click)="toggleTickets(ticket)">
-                                                <mat-icon
-                                                    class="icon-size-5" [svgIcon]="selectedTicket?.key === ticket.key ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'"></mat-icon>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="grid">
-                                        <ng-container *ngIf="selectedTicket?.key === ticket.key">
-                                            <ng-container *ngTemplateOutlet="rowTicketsTemplate; context: {$implicit: ticket}"></ng-container>
-                                        </ng-container>
-                                    </div>
-                                </ng-container>
-                            </ng-container>
-                            <ng-template #rowTicketsTemplate let-ticket>
-                                <div class="grid grid-cols-2 items-center gap-x-12 py-3 px-6 md:px-8 border-b">
-                                    <mat-form-field class="w-full m-auto">
-                                        <mat-label>Disponibles</mat-label>
-                                        <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:collection"></mat-icon>
-                                        <input class="text-black font-bold" matInput disabled value={{ticket.available}}>
-                                    </mat-form-field>
-                                    <mat-form-field class="w-full m-auto">
-                                        <mat-label>Precio</mat-label>
-                                        <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:collection"></mat-icon>
-                                        <input class="text-black font-bold" matInput disabled value={{ticket.price}}>
-                                    </mat-form-field>
-                                </div>
-                            </ng-template>
-                        </div>
-                    </ng-container>
-
-                    <!-- Map -->
-                    <ng-container *ngIf="event.location">
-                        <div class="mt-3 mx-auto">
-                            <div class="text-center font-bold font-serif">
-                                <p>Ubicacion del Evento</p>
-                            </div>
-                            <div [innerHTML]="event.location | noSanitize"
-                                class="w-2/3"></div>
-                        </div>
-                    </ng-container>
-
-                    <!-- DateTime -->
-                    <ng-container *ngIf="event.dateTime">
-                        <div class="flex">
-                            <mat-icon svgIcon="heroicons_outline:calendar"></mat-icon>
-                            <div class="max-w-none ml-6 prose prose-sm">{{event.dateTime | date:'mediumDate'}}</div>
-                        </div>
-                    </ng-container>
                 </div>
             </div>
         </div>
@@ -200,10 +126,10 @@
     <ng-container *ngIf="editMode">
 
         <!-- Header -->
-        <div class="flex items-center justify-between bg-blue-900 w-full h-16 px-8 sm:px-12 dark:bg-accent-700">
+        <div class="flex items-center justify-between bg-teal-600 w-full h-16 p-6 pt-0 pb-0 sm:px-12 dark:bg-accent-700">
             <div class="flex items-center justify-center">
                 <span class="font-medium text-white text-2xl">
-                    {{ event.key === ''? 'Registrar': 'Editar'}} Evento
+                    {{ item.key === ''? 'Registrar': 'Editar'}} Item
                 </span>
             </div>
             <div class="flex items-center">
@@ -217,34 +143,105 @@
 
         <div class="relative flex flex-col flex-auto items-center p-6 pt-0 pb-0 sm:p-12 sm:pt-0">
             <div class="w-full max-w-3xl">
-                <!--  Basic Information Warehouse-->
-                <app-basic-info *ngIf="section =='basic'" [event]="event" [events]="events" [editMode]="editMode" (EventOutput)="eventForm = $event"></app-basic-info>
+                <form [formGroup]="itemForm">
+                    <div class="flex flex-wrap justify-between">
+                        <!-- Name -->
+                        <div class="mt-8 flex-auto mr-8">
+                            <mat-form-field class="w-full ">
+                                <mat-label>Nombre del Item</mat-label>
+                                <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:tag"></mat-icon>
+                                <input matInput [formControlName]="'name'" placeholder="Nombre del Item" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                <mat-error *ngIf="itemForm.get('name').errors">
+                                    {{matcher.getErrorMessage('name', itemForm)}}
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <!-- Stock -->
+                        <div class="mt-8">
+                            <mat-label class="font-medium">Stock del producto</mat-label>
+                            <div class="flex items-center">
+                                <mat-form-field class="w-full">
+                                    <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:chart-pie"></mat-icon>
+                                    <input type="number" matInput [formControlName]="'stock'" placeholder="stock" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                    <mat-error *ngIf="itemForm.get('stock').errors">
+                                        {{matcher.getErrorMessage('stock', itemForm)}}
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <ng-container *ngIf="item.key">
+                        <div class="mt-4 text-center">
+                            <button mat-menu-item (click)="openDialog()">
+                                <mat-icon svgIcon="heroicons_solid:pencil-alt"></mat-icon>
+                                <span class="ml-2">Editar Imagen</span>
+                            </button>
+                        </div>
+                    </ng-container>
+                
+                    <div class="grid grid-cols-2">
+                        <div class="mt-4">
+                            <mat-form-field class="w-full">
+                                <mat-label>Unidad de venta</mat-label>
+                                <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:scale"></mat-icon>
+                                <input matInput [formControlName]="'unitOfMeasurement'" placeholder="Unidad de venta" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                <mat-error *ngIf="itemForm.get('unitOfMeasurement').errors">
+                                    {{matcher.getErrorMessage('unitOfMeasurement', itemForm)}}
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="mt-4 pl-4">
+                            <mat-form-field class="w-full">
+                                <mat-label>Precio</mat-label>
+                                <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:currency-dollar"></mat-icon>
+                                <input type="number" matInput [formControlName]="'price'" placeholder="Precio" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                <mat-error *ngIf="itemForm.get('price').errors">
+                                    {{matcher.getErrorMessage('price', itemForm)}}
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                
+                    <div class="mt-4">
+                        <mat-form-field class="w-full">
+                            <mat-label>Categoria</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:clipboard-list"></mat-icon>
+                            <input matInput [formControlName]="'category'" placeholder="Categoria del producto" [spellcheck]="false" [errorStateMatcher]="matcher">
+                            <mat-error *ngIf="itemForm.get('category').errors">
+                                {{matcher.getErrorMessage('category', itemForm)}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                
+                    <div class="mt-4">
+                        <mat-form-field class="w-full ">
+                            <mat-label>Descripcion</mat-label>
+                            <textarea matInput [formControlName]="'description'" placeholder="Descripcion" [spellcheck]="false" [errorStateMatcher]="matcher" cols="30" rows="3"></textarea>
+                            <mat-error *ngIf="itemForm.get('description').errors">
+                                {{matcher.getErrorMessage('description', itemForm)}}
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
 
-                <!-- Warehouse Organization -->
-                <app-tickets *ngIf="section =='tickets'" [event]="event" [editMode]="editMode" [tickets$]="tickets$"> </app-tickets>
-
-                <ng-container *ngIf="section === 'basic'">
                     <!-- Actions -->
-                    <div class="flex items-center mx-6 sm:-mx-12 py-4 pr-4 pl-1 sm:pr-12 sm:pl-7 border-t bg-gray-50 dark:bg-transparent mt-10">
-                        <ng-container *ngIf="event.key != ''">
-                            <!-- Delete -->
-                            <button class="m-auto" mat-button color="warn" matTooltip="Eliminar" (click)="deleteEvent()">
+                    <div class="flex items-center mt-10 -mx-6 sm:-mx-12 py-4 pr-4 pl-1 sm:pr-12 sm:pl-7 border-t bg-gray-50 dark:bg-transparent ">
+                        <!-- Delete -->
+                        <ng-container *ngIf="item.key !=''">
+                            <button mat-button color="warn" matTooltip="Eliminar" (click)="deleteItem()">
                                 Eliminar
                             </button>
                         </ng-container>
                         <!-- Cancel -->
-                        <button *ngIf="event.key != ''" class="m-auto" mat-button matTooltip="volver" (click)="toggleEditMode(false, 'basic')">
-                            Cancelar
-                        </button>
-                        <button *ngIf="!event.key" class="m-auto" mat-button matTooltip="volver" [routerLink]="['../']">
+                        <button class="ml-auto" mat-button matTooltip="Cancelar" (click)="toggleEditMode(false)">
                             Cancelar
                         </button>
                         <!-- Save -->
-                        <button class="mx-auto" mat-flat-button color="primary" [disabled]="eventForm.invalid" matTooltip="Guardar" (click)="updateEvent()">
+                        <button class="ml-2" mat-flat-button color="primary" [disabled]="itemForm.invalid" matTooltip="Guardar " (click)="updateItem()">
                             Guardar
                         </button>
                     </div>
-                </ng-container>
+                </form>
             </div>
         </div>
     </ng-container>

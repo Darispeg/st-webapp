@@ -2,19 +2,19 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Event } from '../models/events.types';
-import { EventsService } from './events.service';
+import { Item } from '../models/items.types';
+import { ItemsService } from './items.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class EventsResolver implements Resolve<any>
 {
-    constructor(private _EventService: EventsService){}
+    constructor(private _EventService: ItemsService){}
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Event[]>
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Item[]>
     {
-        return this._EventService.getEvents();
+        return this._EventService.getItems();
     }
 }
 
@@ -24,13 +24,13 @@ export class EventsResolver implements Resolve<any>
 export class EventsEventResolver implements Resolve<any>
 {
     constructor(
-        private _EventService: EventsService,
+        private _EventService: ItemsService,
         private _router: Router
     ){}
 
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Event>
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Item>
     {
-        return this._EventService.getEventByKey(route.paramMap.get('key'))
+        return this._EventService.getItemByKey(route.paramMap.get('key'))
                 .pipe(
                     catchError((error) => {
                         console.error(error);

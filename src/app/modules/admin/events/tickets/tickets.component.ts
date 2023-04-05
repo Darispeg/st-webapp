@@ -3,9 +3,9 @@ import { FormBuilder, FormGroup } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { FuseConfirmationService } from "@fuse/services/confirmation";
 import { Observable, Subject, throwError } from "rxjs";
-import { EventsService } from "../events.service";
+import { ItemsService } from "../items.service";
 import { EventsListComponent } from "../list/list.component";
-import { Event } from "../../models/events.types";
+import { Item } from "../../models/items.types";
 import { Ticket } from "../../models/tickets.types";
 import { catchError } from "rxjs/operators";
 
@@ -16,7 +16,7 @@ import { catchError } from "rxjs/operators";
 export class TicketsComponent implements OnInit, OnDestroy {
 
     @Input()
-    event: Event;
+    event: Item;
 
     @Input()
     editMode: boolean = false;
@@ -35,7 +35,7 @@ export class TicketsComponent implements OnInit, OnDestroy {
         private _changeDetectorRef: ChangeDetectorRef,
         private _eventsListComponent: EventsListComponent,
         private _formBuilder: FormBuilder,
-        private _eventsService: EventsService,
+        private _eventsService: ItemsService,
         private _snackBar: MatSnackBar,
         private _fuseConfirmationService: FuseConfirmationService,
     ) { }
