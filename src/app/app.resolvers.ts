@@ -6,6 +6,7 @@ import { NavigationService } from 'app/core/navigation/navigation.service';
 import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
 import { ShortcutsService } from 'app/layout/common/shortcuts/shortcuts.service';
 import { UserService } from 'app/core/user/user.service';
+import { ShoppingService } from './layout/common/shopping/shopping.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,7 +21,8 @@ export class InitialDataResolver implements Resolve<any>
         private _navigationService: NavigationService,
         private _notificationsService: NotificationsService,
         private _shortcutsService: ShortcutsService,
-        private _userService: UserService
+        private _userService: UserService,
+        private _shoppingService: ShoppingService
     )
     {
     }
@@ -43,7 +45,8 @@ export class InitialDataResolver implements Resolve<any>
             this._messagesService.getAll(),
             this._notificationsService.getAll(),
             this._shortcutsService.getAll(),
-            this._userService.get()
+            this._userService.get(),
+            this._shoppingService.getShoppingCar()
         ]);
     }
 }

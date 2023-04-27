@@ -1,0 +1,79 @@
+<div class="flex flex-col flex-auto min-w-0 bg-card">
+    <!-- Header -->
+    <div class="flex flex-row flex-0 sm:items-center sm:justify-between p-6 py-8 px-10 border-b bg-card dark:bg-transparent">
+        <div class="flex-1 min-w-0">
+            <!-- Breadcrumbs -->
+            <div class="flex flex-wrap items-center font-medium">
+                <div>
+                    <a class="whitespace-nowrap text-primary-500">Productos</a>
+                </div>
+                <div class="flex items-center ml-1 whitespace-nowrap">
+                    <mat-icon
+                        class="icon-size-5 text-secondary"
+                        [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+                    <a class="ml-1 text-primary-500">{{item.category}}</a>
+                </div>
+                <div class="flex items-center ml-1 whitespace-nowrap">
+                    <mat-icon
+                        class="icon-size-5 text-secondary"
+                        [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+                    <a class="ml-1 text-primary-500">Detalles del producto</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2">
+        <ng-container *ngIf="item.urlImage">
+            <div class="flex h-20 w-auto mx-auto my-auto p-5 items-center py-50">
+                <img class="rounded-lg bg-cover h-90" src="{{item.urlImage}}">
+            </div>
+        </ng-container>
+        <div class="p-10">
+            <form [formGroup]="detailForm">
+                <div>
+                    <span class="text-blue-900 font-serif font-bold text-3xl">{{item.name}}</span>
+                </div>
+                <div class="flex items-center py-3">
+                    <div class="flex">
+                        <mat-icon class="text-yellow-500" svgIcon="heroicons_outline:star"></mat-icon>
+                        <mat-icon class="text-yellow-500" svgIcon="heroicons_outline:star"></mat-icon>
+                        <mat-icon class="text-yellow-500" svgIcon="heroicons_outline:star"></mat-icon>
+                        <mat-icon class="text-yellow-500" svgIcon="heroicons_outline:star"></mat-icon>
+                        <mat-icon class="text-yellow-500" svgIcon="heroicons_outline:star"></mat-icon>
+                        <span class="pl-8 text-gray-500">Sin reseñas</span>
+                    </div>
+                </div>
+                <div class="pb-2">
+                    <span class="text-gray-500 semi-bold text-2xl line-through">Antes Bs {{(item.price - 5)}}</span>
+                    <span class="pl-5 text-red-700 font-bold text-2xl">Ahora Bs {{item.price}}</span>
+                </div>
+                <div class="pb-2">
+                    <span class="text-black font-bold">En stock: </span>
+                    <span class="text-xl pl-5">{{item.stock}}</span>
+                </div>
+                <div class="pb-2">
+                    <span class="text-black font-bold">Unidad de venta: </span>
+                    <span class="text-transform: uppercase text-xl pl-5">{{item.unitOfMeasurement}}</span>
+                </div>
+                <ng-container *ngIf="item.stock < 20">
+                    <div class="bg-blue-300 h-15 sm:h-10 border-2 p-2 rounded-lg">
+                        <span>Quedan pocas unidades disponibles </span><span class="text-black font-semibold">Ordene pronto!</span>
+                    </div>
+                </ng-container>
+                <mat-form-field class="w-full py-3">
+                    <mat-label>Cantidad</mat-label>
+                    <mat-icon matPrefix class="hidden sm:flex icon-size-5 " svgIcon="heroicons_solid:hashtag"></mat-icon>
+                    <mat-select [value]="1" [formControlName]="'quantity'">
+                        <mat-option *ngFor="let num of numbers" [value]="num">{{num}} {{item.unitOfMeasurement}}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <button class="hover:bg-primary-300 w-full text-gray-50" mat-flat-button [color]="'primary'" matTooltip="Agregar" (click)="AddToCart()">
+                    <span>Agregar al carrito</span>
+                </button>
+                <button class="hover:bg-gray-400 w-full bg-gray-200 my-3 text-gray-800" mat-flat-button matTooltip="Comprar">
+                    <span>Comprar ahora</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

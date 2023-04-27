@@ -15,6 +15,7 @@ import { ShortcutsModule } from 'app/layout/common/shortcuts/shortcuts.module';
 import { UserModule } from 'app/layout/common/user/user.module';
 import { SharedModule } from 'app/shared/shared.module';
 import { EnterpriseLayoutComponent } from 'app/layout/layouts/horizontal/enterprise/enterprise.component';
+import { ShoppingModule } from 'app/layout/common/shopping/shopping.module';
 
 @NgModule({
     declarations: [
@@ -35,7 +36,8 @@ import { EnterpriseLayoutComponent } from 'app/layout/layouts/horizontal/enterpr
         SearchModule,
         ShortcutsModule,
         UserModule,
-        SharedModule
+        SharedModule,
+        ShoppingModule
     ],
     exports     : [
         EnterpriseLayoutComponent

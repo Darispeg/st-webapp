@@ -13,16 +13,20 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Route, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { PipesModule } from 'app/core/pipes/pipes.module';
 import { SharedModule } from 'app/shared/shared.module';
 import { MatTabsModule } from '@angular/material/tabs';
-import { IndexComponent } from './index.component';
 import { indexRoutes } from './index.routing';
+import { IndexDetailsComponent } from './details/details.component';
+import { IndexComponent } from './Index.component';
+import { IndexListComponent } from './list/list.component';
 
 @NgModule({
     declarations: [
-        IndexComponent
+        IndexComponent,
+        IndexListComponent,
+        IndexDetailsComponent
     ],
     imports     : [
         RouterModule.forChild(indexRoutes),
