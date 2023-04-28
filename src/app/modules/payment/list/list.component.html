@@ -1,0 +1,152 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+    <div class="flex-auto h-full bg-card dark:bg-transparent">
+        <div class="flex-auto text-center overflow-y-auto max-h-full sm:max-h-160">
+            <div class="flex flex-col sm:flex-row md:flex-col flex-auto justify-between py-2 px-6 md:px-8 border-b bg-accent-600">
+                <!-- Title -->
+                <div>
+                    <div class="text-4xl font-extrabold tracking-tight leading-none text-gray-50">Carrito de compras</div>
+                    <div class="ml-0.5 font-medium text-gray-300">
+                        <ng-container *ngIf="totalCount > 0">
+                            {{totalCount}}
+                        </ng-container>
+                        {{totalCount | i18nPlural: { '=0' : 'sin productos', '=1' : 'producto', 'other': 'productos' } }}
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 ml-5">
+                <!-- Details List -->
+                <div>
+                    <div class="ml-5 overflow-y-auto max-h-full sm:max-h-120">
+                        <ng-container *ngIf="shopping$ | async as shopping">
+                            <ng-container *ngIf="shopping.details.length; else empty">
+                                <ng-container *ngFor="let detail of shopping.details; let i = index; trackBy: trackByFn">
+                                    <!-- Name, price, quantity and subtotal -->
+                                    <a class="z-20 flex items-center px-6 py-4 md:px-8 cursor-pointer border-b hover:bg-gray-100">
+                                        <ng-container *ngIf="detail.item.urlImage">
+                                            <img
+                                                class="flex-shrink-0 w-18 h-18 mt-2 mr-10 rounded-full overflow-hidden object-cover"
+                                                [src]="detail.item.urlImage"
+                                                [alt]="'Image del producto'">
+                                        </ng-container>
+                                        <div class="min-w-0">
+                                            <div class="text-xl font-bold leading-5 truncate">{{detail.item.name}}</div>
+                                            <div class="leading-5 truncate text-secondary">Precio: {{detail.item.price}} [Bs]</div>
+                                            <div class="leading-5 truncate text-secondary">Cantidad: {{detail.quantity}}</div>
+                                            <div class="leading-5 truncate text-secondary">Subtotal: {{(detail.item.price * detail.quantity)}} [Bs]</div>
+                                        </div>
+                                    </a>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <ng-container *ngIf="totalCount > 0">
+                        <div class="border-t bg-gray-100 p-4">
+                            <div class="text-xl font-semibold leading-5 truncate">Total a pagar: {{total}} Bs</div>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <!-- Form Stripe -->
+                <ng-container *ngIf="totalCount > 0">
+                    <div class="relative flex flex-col flex-auto items-center p-6 pt-0 pb-0 sm:p-12 sm:pt-0 max-h-full sm:max-h-160">
+                        <div class="w-2/3 max-w-3xl">
+                            <form [formGroup]="paymentForm">
+                                <div class="mt-4">
+                                    <span class="font-medium text-secondary text-xl">
+                                        Informacion personal
+                                    </span>
+                                    <mat-form-field class="w-full" appearance="outline">
+                                        <mat-label>Email</mat-label>
+                                        <mat-icon matPrefix class="hidden sm:flex icon-size-5 mr-3" svgIcon="heroicons_solid:mail"></mat-icon>
+                                        <input matInput [formControlName]="'email'" placeholder="Email" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                        <mat-error *ngIf="paymentForm.get('email').errors">
+                                            {{matcher.getErrorMessage('email', paymentForm)}}
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <mat-form-field class="w-full" appearance="outline">
+                                        <mat-label>Telefono</mat-label>
+                                        <mat-icon matPrefix class="hidden sm:flex icon-size-5 mr-3" svgIcon="heroicons_solid:phone"></mat-icon>
+                                        <input matInput [formControlName]="'phone'" placeholder="79752455" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                        <mat-error *ngIf="paymentForm.get('phone').errors">
+                                            {{matcher.getErrorMessage('phone', paymentForm)}}
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
+                                
+                                <mat-form-field class="w-full" appearance="outline">
+                                    <mat-label>Número de tarjeta</mat-label>
+                                    <mat-icon matPrefix class="hidden sm:flex icon-size-5 mr-3" svgIcon="heroicons_solid:credit-card"></mat-icon>
+                                    <input matInput [formControlName]="'cardNumber'" placeholder="1234 5678 9012 3456" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                    <mat-error *ngIf="paymentForm.get('cardNumber').errors">
+                                        {{matcher.getErrorMessage('cardNumber', paymentForm)}}
+                                    </mat-error>
+                                </mat-form-field>
+                                <div class="grid grid-cols-3">
+                                    <div>
+                                        <mat-form-field class="w-full" appearance="outline">
+                                            <mat-label>Expiracion</mat-label>
+                                            <input [formControlName]="'expirationDate'" matInput [matDatepicker]="picker" [errorStateMatcher]="matcher" placeholder="MM/YY">
+                                            <mat-hint>MM/YY</mat-hint>
+                                            <!-- <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle> -->
+                                            <mat-datepicker #picker (monthSelected)="setMonthAndYear($event, dp)"></mat-datepicker>
+                                            <mat-error *ngIf="paymentForm.get('expirationDate').errors">
+                                                {{matcher.getErrorMessage('expirationDate', paymentForm)}}
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div>
+                                        <mat-form-field class="w-full" appearance="outline">
+                                            <mat-label>CVC</mat-label>
+                                            <input matInput [formControlName]="'cvc'" placeholder="123" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                            <mat-error *ngIf="paymentForm.get('cvc').errors">
+                                                {{matcher.getErrorMessage('cvc', paymentForm)}}
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                    <div>
+                                        <mat-form-field class="w-full" appearance="outline">
+                                            <mat-label>Codigo postal</mat-label>
+                                            <input matInput [formControlName]="'zip'" placeholder="00591" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                            <mat-error *ngIf="paymentForm.get('zip').errors">
+                                                {{matcher.getErrorMessage('zip', paymentForm)}}
+                                            </mat-error>
+                                        </mat-form-field>
+                                    </div>
+                                </div>
+            
+                                <mat-form-field class="w-full" appearance="outline">
+                                    <mat-label>Nombre de la tarjeta</mat-label>
+                                    <mat-icon matPrefix class="hidden sm:flex icon-size-5 mr-3" svgIcon="heroicons_solid:user-circle"></mat-icon>
+                                    <input matInput [formControlName]="'name'" placeholder="Nombre de la tarjeta" [spellcheck]="false" [errorStateMatcher]="matcher">
+                                    <mat-error *ngIf="paymentForm.get('name').errors">
+                                        {{matcher.getErrorMessage('name', paymentForm)}}
+                                    </mat-error>
+                                </mat-form-field>
+            
+                                <!-- Actions -->
+                                <div class="pt-5">
+                                    <!-- Cancel -->
+                                    <button class="ml-auto" mat-button matTooltip="Cancelar">
+                                        Cancelar
+                                    </button>
+                                    <!-- Save -->
+                                    <button class="ml-2" mat-flat-button color="primary" [disabled]="paymentForm.invalid" matTooltip="Guardar" (click)="createPayment()">
+                                        Guardar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <div class="flex-auto text-center">
+            <ng-container *ngIf="totalCount === 0">
+                <div class="ml-0.5 font-medium text-secondary text-3xl tracking-tight my-20">
+                    Sin producto en el carrito
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+</div>

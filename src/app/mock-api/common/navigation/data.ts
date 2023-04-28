@@ -3,17 +3,24 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 
 export const defaultNavigation: FuseNavigationItem[] = [
     {
-        id: 'dashboard',
-        title: 'Dashboard',
-        type: 'basic',
-        link: 'dashboard',
-        icon: 'heroicons_outline:chart-square-bar'
-    },
-    {
         id: 'index',
         title: 'Index',
         type: 'basic',
         link: 'index',
+        icon: 'heroicons_outline:view-grid'
+    },
+    {
+        id: 'payment',
+        title: 'Carrito',
+        type: 'basic',
+        link: 'payment',
+        icon: 'heroicons_outline:shopping-cart'
+    },
+    {
+        id: 'dashboard',
+        title: 'Dashboard',
+        type: 'basic',
+        link: 'dashboard',
         icon: 'heroicons_outline:chart-square-bar'
     },
     {
@@ -105,11 +112,11 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:view-grid'
     },
     {
-        id: 'dashboard',
-        title: 'Dashboard',
+        id: 'payment',
+        title: 'Carrito',
         type: 'basic',
-        link: 'dashboard',
-        icon: 'heroicons_outline:chart-square-bar'
+        link: 'payment',
+        icon: 'heroicons_outline:shopping-cart'
     },
     {
         id   : 'admin',
@@ -118,5 +125,12 @@ export const horizontalNavigation: FuseNavigationItem[] = [
         type : 'group',
         icon : 'heroicons_outline:cog',
         children: []
-    }
+    },
+    {
+        id: 'dashboard',
+        title: 'Dashboard',
+        type: 'basic',
+        link: 'dashboard',
+        icon: 'heroicons_outline:chart-square-bar'
+    },
 ];

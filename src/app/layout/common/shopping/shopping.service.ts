@@ -4,6 +4,7 @@ import { Shopping, ShoppingDetail } from "./shopping.model";
 import { map, switchMap, take, tap } from "rxjs/operators";
 import { environment } from "environments/environment";
 import { HttpClient } from "@angular/common/http";
+import { Payment } from "app/modules/payment/payment.model";
 
 @Injectable({
     providedIn: 'root'
@@ -55,6 +56,19 @@ export class ShoppingService
                 console.log(this._shopping.value);
                 return detail;
             })
+        )
+    }
+
+    createPayment(newPayment: Payment): Observable<String>
+    {
+        return this.shopping$.pipe(
+            take(1),
+            switchMap(response => this._httpClient.post<String>(`${environment.APIurl}/payment`, newPayment).pipe(
+                map((response) => {
+                    this._shopping.next({ key: '', total: 0, details:[]});
+                    return response;
+                })
+            ))
         )
     }
 }

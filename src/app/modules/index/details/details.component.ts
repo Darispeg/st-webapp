@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ActivatedRoute, Router } from "@angular/router";
 import { ShoppingDetail } from "app/layout/common/shopping/shopping.model";
 import { ShoppingService } from "app/layout/common/shopping/shopping.service";
 import { ItemsService } from "app/modules/admin/events/items.service";

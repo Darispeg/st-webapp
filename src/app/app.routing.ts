@@ -62,6 +62,9 @@ export const appRoutes: Route[] = [
                 path: 'index', loadChildren: () => import('app/modules/index/index.module').then(m => m.IndexModule)
             },
             {
+                path: 'payment', loadChildren: () => import('app/modules/payment/payment.module').then(m => m.PaymentModule)
+            },
+            {
                 path: 'admin', children:
                 [
                     {path: 'users', loadChildren: () => import('app/modules/admin/users/users.module').then(m => m.UsersModule)},  
