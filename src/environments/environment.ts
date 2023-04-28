@@ -4,7 +4,7 @@
 
 export const environment = {
     production: false,
-    APIurl: "http://localhost:8090/api/v1"
+    APIurl: "https://app-cabrera.herokuapp.com/api/v1"
 };
 
 /*
